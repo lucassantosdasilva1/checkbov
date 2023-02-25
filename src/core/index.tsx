@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useEffect } from "react";
 // import Router from "./router";
 // import theme from "@shared/theme";
 // import HookProvider from "./hooks";
 import { useFonts } from "expo-font";
 import { Text } from "react-native";
 // import { ThemeProvider } from "styled-components";
+import SplashScreen from "react-native-splash-screen";
 
 export default function App() {
   // const [loadedFonts] = useFonts({
@@ -14,6 +15,9 @@ export default function App() {
   // });
 
   // if (!loadedFonts) return <></>;
+  useEffect(() => {
+    SplashScreen.hide(); //hides the splash screen on app load.
+  }, []);
 
   return (
     <Text>Hello new World</Text>
