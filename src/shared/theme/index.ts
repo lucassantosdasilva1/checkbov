@@ -1,6 +1,6 @@
 export default {
   colors: {
-    primary_background: "#1A1A2F",
+    primary_background: "#1a1a30",
     secondary_background: "#242443",
     terciary_background: "#FFFFFF",
 
@@ -10,6 +10,7 @@ export default {
 
     primary_text: "#FFFFFF",
     secondary_text: "#A1A1C1",
+    terciary_text: "#777E99",
   },
   fonts: {
     regular: "Roboto_400Regular",

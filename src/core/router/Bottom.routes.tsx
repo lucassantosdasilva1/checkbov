@@ -3,27 +3,34 @@ import { useTheme } from "styled-components";
 import { AntDesign } from "@expo/vector-icons";
 // import { Header } from "@modules/repositories/components/header";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+// import { Home } from "../../modules/Home/screens/index";
 import { Home } from "@modules/Home/screens";
 
 // import Repositories from "@modules/repositories/screens";
 // import Favorites from "@modules/favorites/screens";
 
-const Tab = createBottomTabNavigator();
+const { Navigator, Screen } = createBottomTabNavigator();
 
 export default function BottomRouter() {
   const theme = useTheme();
 
   return (
-    <Tab.Navigator
+    <Navigator
       screenOptions={{
+        tabBarActiveTintColor: theme.colors.primary_text,
+        tabBarInactiveTintColor: theme.colors.terciary_text,
+        headerShown: false,
         tabBarLabelStyle: {
           fontFamily: theme.fonts.regular,
           fontSize: 12,
         },
+        tabBarStyle: {
+          backgroundColor: theme.colors.secondary_background,
+        },
       }}
     >
-      <Tab.Screen
-        name="Repositories"
+      <Screen
+        name="Home"
         component={Home}
         options={{
           tabBarLabel: "Home",
@@ -32,16 +39,26 @@ export default function BottomRouter() {
           ),
         }}
       />
-      {/* <Tab.Screen
-        name="Favorites"
-        component={Favorites}
+      <Screen
+        name="Outro"
+        component={Home}
         options={{
-          tabBarLabel: "Favoritos",
+          tabBarLabel: "Home",
           tabBarIcon: ({ size, color }) => (
-            <AntDesign name="star" size={size} color={color} />
+            <AntDesign name="home" size={size} color={color} />
           ),
         }}
-      /> */}
-    </Tab.Navigator>
+      />
+      <Screen
+        name="Outro2"
+        component={Home}
+        options={{
+          tabBarLabel: "Home",
+          tabBarIcon: ({ size, color }) => (
+            <AntDesign name="home" size={size} color={color} />
+          ),
+        }}
+      />
+    </Navigator>
   );
 }
