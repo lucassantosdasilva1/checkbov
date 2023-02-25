@@ -1,30 +1,31 @@
 import React, { useEffect } from "react";
-// import Router from "./router";
-// import theme from "@shared/theme";
+import Router from "./router";
+import theme from "../shared/theme";
 // import HookProvider from "./hooks";
 import { useFonts } from "expo-font";
-import { Text } from "react-native";
-// import { ThemeProvider } from "styled-components";
+import { ThemeProvider } from "styled-components";
 import SplashScreen from "react-native-splash-screen";
+import {
+  Roboto_400Regular,
+  Roboto_500Medium
+} from '@expo-google-fonts/roboto';
 
 export default function App() {
-  // const [loadedFonts] = useFonts({
-  //   "Montserrat-Regular": require("@assets/fonts/Montserrat-Regular.ttf"),
-  //   "Montserrat-Medium": require("@assets/fonts/Montserrat-Medium.ttf"),
-  //   "Montserrat-Bold": require("@assets/fonts/Montserrat-Bold.ttf"),
-  // });
+  const [loadedFonts] = useFonts({
+    Roboto_400Regular,
+    Roboto_500Medium
+  });
 
-  // if (!loadedFonts) return <></>;
+  if (!loadedFonts) return <></>;
   useEffect(() => {
     SplashScreen.hide(); //hides the splash screen on app load.
   }, []);
 
   return (
-    <Text>Hello new World</Text>
-    // <ThemeProvider theme={theme}>
-      // <HookProvider>
-        // <Router />
-      // </HookProvider>
-    // </ThemeProvider>
+    <ThemeProvider theme={theme}>
+      {/* // <HookProvider> */}
+        <Router />
+      {/* // </HookProvider> */}
+    </ThemeProvider>
   );
 }
