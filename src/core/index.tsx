@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import Router from "./router";
 import theme from "../shared/theme";
 // import HookProvider from "./hooks";
+import AppLoading from 'expo-app-loading';
 import { ThemeProvider } from "styled-components";
 import SplashScreen from "react-native-splash-screen";
 import {
@@ -9,7 +10,7 @@ import {
   Roboto_400Regular,
   Roboto_500Medium,
 } from "@expo-google-fonts/roboto";
-import { Text } from "react-native";
+import { StatusBar } from "react-native";
 
 export default function App() {
   const [loadedFonts] = useFonts({
@@ -23,11 +24,12 @@ export default function App() {
 
   return (
     <>
-      {!loadedFonts ? null : (
+      {!loadedFonts ? <AppLoading /> : (
         <>
           <ThemeProvider theme={theme}>
       {/* // <HookProvider> */}
-            <Router />
+              <StatusBar barStyle="light-content" backgroundColor="transparent" translucent/>
+              <Router />
       {/* // </HookProvider> */}
           </ThemeProvider>
         </>
