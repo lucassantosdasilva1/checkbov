@@ -9,11 +9,11 @@ import {
 
 export function Home() {
   return (
+    
     <Container>
       <Header/>
       <Content/>
       {/*<Footer/> */}
-      <Text>Home</Text>
     </Container>
   );
 }

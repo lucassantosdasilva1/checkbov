@@ -1,9 +1,9 @@
 import React, { useEffect } from "react";
 import Router from "./router";
 import theme from "../shared/theme";
-// import HookProvider from "./hooks";
 import AppLoading from 'expo-app-loading';
 import { ThemeProvider } from "styled-components";
+import HookProvider from "./hooks";
 import SplashScreen from "react-native-splash-screen";
 import {
   useFonts,
@@ -27,10 +27,10 @@ export default function App() {
       {!loadedFonts ? <AppLoading /> : (
         <>
           <ThemeProvider theme={theme}>
-      {/* // <HookProvider> */}
-              <StatusBar barStyle="light-content" backgroundColor="transparent" translucent/>
+            <StatusBar barStyle="light-content" backgroundColor="transparent" translucent/>
+            <HookProvider>
               <Router />
-      {/* // </HookProvider> */}
+            </HookProvider>
           </ThemeProvider>
         </>
       )}

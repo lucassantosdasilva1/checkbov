@@ -71,3 +71,10 @@ export interface IChecklistPut {
     longitude: string;
   };
 }
+
+export type CheckListContext = {
+  checkLists: IChecklistGet[];
+  getAllCheckListsOnline: () => Promise<void>;
+  getAllCheckListsOffline: () => Promise<void>;
+  toggleModalOfSelectCheckList: () => void;
+};
