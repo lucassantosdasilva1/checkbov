@@ -1,5 +1,6 @@
 import React from 'react';
 import { Text } from 'react-native';
+import { Content } from '../components/Content';
 import { Header } from '../components/Header';
 
 import {
@@ -9,9 +10,9 @@ import {
 export function Home() {
   return (
     <Container>
-       <Header/>
-      {/*<Content/>
-      <Footer/> */}
+      <Header/>
+      <Content/>
+      {/*<Footer/> */}
       <Text>Home</Text>
     </Container>
   );
