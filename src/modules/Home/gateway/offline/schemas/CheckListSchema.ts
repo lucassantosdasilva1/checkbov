@@ -1,6 +1,10 @@
 export const CheckListSchema = {
   name: "checklist",
   properties: {
+    ActType: { type: "string", optional: true, default: "" },
+    syncStatus: { type: "string", optional: true, default: "" },
+    isDeleted: { type: "bool", optional: true, default: false },
+
     _id: "string",
     type: "string",
     amount_of_milk_produced: "int",
@@ -10,8 +14,8 @@ export const CheckListSchema = {
     to:"string",
     number_of_cows_head: "int",
     had_supervision: "bool",
-    latitude: "string",
-    longitude: "string",
+    latitude: "double",
+    longitude: "double",
     created_at: "date",
     updated_at: "date",
     __v: { type: "int", optional: true, default: 0 },

@@ -1,11 +1,11 @@
 import IChecklistHttpRepository from "../gateway/http/repository/ChecklistHttpRepository";
 import ChecklistHttpService from "../gateway/http/service/ChecklistHttpService";
-import IRepoOfflineRepository from "../gateway/offline/repository/CheckListOfflineRepository";
-import RepoOfflineService from "../gateway/offline/service/CheckListOfflineService";
+import CheckListOfflineRepository from "../gateway/offline/repository/CheckListOfflineRepository";
+import CheckListOfflineService from "../gateway/offline/service/CheckListOfflineService";
 
 interface IRepoService {
   http: IChecklistHttpRepository;
-  offline: IRepoOfflineRepository;
+  offline: CheckListOfflineRepository;
 }
 
 const checkListService: IRepoService = {
@@ -17,10 +17,13 @@ const checkListService: IRepoService = {
     delete: ChecklistHttpService.delete,
   },
   offline: {
-    // getRepository: RepoOfflineService.getRepository,
-    // addRepository: RepoOfflineService.addRepository,
-    // addOwner: RepoOfflineService.addOwner,
-    // getOwner: RepoOfflineService.getOwner,
+    getAll: CheckListOfflineService.getAll,
+    getById: CheckListOfflineService.getById,
+    getDeleteds: CheckListOfflineService.getDeleteds,
+    addCheckListsHttp: CheckListOfflineService.addCheckListsHttp,
+    create: CheckListOfflineService.create,
+    update: CheckListOfflineService.update,
+    deleteById: CheckListOfflineService.deleteById,
   },
 };
 

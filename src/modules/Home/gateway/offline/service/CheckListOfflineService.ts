@@ -2,12 +2,14 @@ import {
   IChecklistGet,
   IChecklistPost,
   IChecklistPut,
-  IDataBaseCheckListGet,
+  IChecklistGetOffline,
+  IChecklistSetDataOffline,
 } from "@modules/Home/hook/types";
 import CheckListOfflineRepository from "../repository/CheckListOfflineRepository";
 import Realm from "realm";
 import { CheckListSchema, DeleteApiCheckListSchema, UpdateApiCheckListSchema } from "../schemas/CheckListSchema";
 import UUID from 'react-native-uuid';
+import IChecklistHttpRepository from "../../http/repository/ChecklistHttpRepository";
 
 const conectionChecklistRealm = async () =>
   await Realm.open({
@@ -15,19 +17,17 @@ const conectionChecklistRealm = async () =>
     schema: [CheckListSchema],
   });
 
-const conectionUpdateListRealm = async () =>
-  await Realm.open({
-    path: "checklist",
-    schema: [UpdateApiCheckListSchema],
-  });
+// const conectionUpdateListRealm = async () =>
+//   await Realm.open({
+//     path: "checklist",
+//     schema: [UpdateApiCheckListSchema],
+//   });
 
-const conectionDeleteListRealm = async () =>
-  await Realm.open({
-    path: "checklist",
-    schema: [DeleteApiCheckListSchema],
-  });
-
-
+// const conectionDeleteListRealm = async () =>
+//   await Realm.open({
+//     path: "checklist",
+//     schema: [DeleteApiCheckListSchema],
+//   });
 
 const CheckListOfflineService: CheckListOfflineRepository = {
   getById: async (_id: string) => {
@@ -41,7 +41,6 @@ const CheckListOfflineService: CheckListOfflineRepository = {
     } else {
       const checkList: IChecklistGet = {
         _id: checkListDB._id,
-        id: checkListDB.id,
         type: checkListDB.type,
         amount_of_milk_produced: checkListDB.amount_of_milk_produced,
         farmer: {
@@ -70,12 +69,11 @@ const CheckListOfflineService: CheckListOfflineRepository = {
 
   getAll: async () => {
     const realm = await conectionChecklistRealm();
-    const data = realm.objects("checklist");
+    const data = realm.objects<IChecklistGetOffline>("checklist").filtered("isDeleted = false");
 
     const result: IChecklistGet[] = data.map((checkList: any) => {
       return {
         _id: checkList._id,
-        id: checkList.id,
         type: checkList.type,
         amount_of_milk_produced: checkList.amount_of_milk_produced,
         farmer: {
@@ -103,11 +101,22 @@ const CheckListOfflineService: CheckListOfflineRepository = {
     return result;
   },
 
+  getDeleteds: async () => {
+    const realm = await conectionChecklistRealm();
+    const data = realm.objects<IChecklistGetOffline>("checklist").filtered("isDeleted = true");
+
+    const result: IChecklistGetOffline[] = data.map((checkList: any) => {
+      return checkList;
+    });
+    
+    return result;
+  },
+
+
   create: async (checkList: IChecklistPost) => {
     const realm = await conectionChecklistRealm();
     const persistedCheckList = {
       _id: UUID.v1(),
-      id: checkList?.id,
       type: checkList.type,
       amount_of_milk_produced: checkList.amount_of_milk_produced,
       farmerName: checkList.farmer.name,
@@ -123,6 +132,34 @@ const CheckListOfflineService: CheckListOfflineRepository = {
     }
     realm.write(() => {
       realm.create("checklist", persistedCheckList);
+    });
+  },
+
+  addCheckListsHttp: async (checkList: IChecklistGet[]) => {
+    const realm = await conectionChecklistRealm();
+
+    const setDataOnlineToOffline = checkList.map((checkList: IChecklistGet) => {
+      const checklist: IChecklistSetDataOffline = {
+        _id: checkList._id,
+        type: checkList.type,
+        amount_of_milk_produced: Number(checkList.amount_of_milk_produced),
+        farmerName: checkList.farmer.name,
+        farmerCity: checkList.farmer.city,
+        from: checkList.from.name,
+        to: checkList.to.name,
+        number_of_cows_head: Number(checkList.number_of_cows_head),
+        had_supervision: checkList.had_supervision,
+        latitude: checkList.location.latitude,
+        longitude: checkList.location.longitude,
+        created_at: checkList.created_at,
+        updated_at: checkList.updated_at,
+        __v: checkList.__v,
+      };
+      return checklist
+    })
+
+    realm.write(() => {
+      realm.create("checklist", setDataOnlineToOffline);
     });
   },
 
@@ -168,9 +205,10 @@ const CheckListOfflineService: CheckListOfflineRepository = {
 
   deleteById: async (_id: string) => {
     const realm = await conectionChecklistRealm();
-    const checkList = realm.objectForPrimaryKey("checklist", _id);
+    const data: any = realm.objectForPrimaryKey("checklist", _id);
+
     realm.write(() => {
-      realm.delete(checkList);
+      data.isDeleted = true;
     });
   },
 };
