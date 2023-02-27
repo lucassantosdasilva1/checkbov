@@ -1,10 +1,6 @@
-export type IChecklistsType = {
-  type: "BPA" | "BPF" | "Antibiotic";
-}
-
 export interface IChecklistGet {
-  _id: number;
-  type: IChecklistsType;
+  _id?: string;
+  type: "BPA" | "BPF" | "Antibiotic";
   amount_of_milk_produced: number;
   farmer: {
     name: string;
@@ -28,8 +24,8 @@ export interface IChecklistGet {
 }
 
 export interface IChecklistPost { 
-  _id: number;
-  type: IChecklistsType;
+  _id: string;
+  type: "BPA" | "BPF" | "Antibiotic";
   amount_of_milk_produced: number;
   farmer: {
     name: string;
@@ -52,7 +48,7 @@ export interface IChecklistPost {
 }
 
 export interface IChecklistPut {
-  type: IChecklistsType;
+  type: "BPA" | "BPF" | "Antibiotic";
   amount_of_milk_produced: number;
   number_of_cows_head: number;
   had_supervision: boolean;
@@ -77,4 +73,22 @@ export type CheckListContext = {
   getAllCheckListsOnline: () => Promise<void>;
   getAllCheckListsOffline: () => Promise<void>;
   toggleModalOfSelectCheckList: () => void;
+};
+
+export type IDataBaseCheckListGet = {
+  _id: string;
+  id?: number;
+  type: "BPA" | "BPF" | "Antibiotic";
+  amount_of_milk_produced: number;
+  farmerName: string;
+  farmerCity: string;
+  from: string;
+  to: string;
+  number_of_cows_head: number;
+  had_supervision: boolean;
+  latitude: string;
+  longitude: string;
+  created_at: Date;
+  updated_at: Date;
+  __v: number;
 };
