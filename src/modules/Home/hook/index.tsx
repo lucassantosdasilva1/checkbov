@@ -233,10 +233,10 @@ export const CheckListProvider = ({ children }: Children) => {
         ).then(async () => {  
         // await checkListService.http.post(tentarne).then(async () => {
           console.log("Deu foi certo pai")
-          return true
           
           await onConectJob();
         });
+        return true
       } catch (error: any) {
         console.log(
           "ERROR: CREATE NEW CHECKLIST ONLINE =>",
