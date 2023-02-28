@@ -23,9 +23,12 @@ export default function BottomRouter() {
         tabBarLabelStyle: {
           fontFamily: theme.fonts.regular,
           fontSize: 12,
+          marginBottom: 10,
         },
         tabBarStyle: {
           backgroundColor: theme.colors.secondary_background,
+          height: 62,
+          paddingHorizontal: 10,
         },
       }}
     >

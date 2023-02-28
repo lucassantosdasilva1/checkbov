@@ -7,10 +7,11 @@ import Realm from "realm";
 import UUID from "react-native-uuid";
 import { CheckListSchema } from "../gateway/offline/schemas/CheckListSchema";
 
-import { Container } from "./styles";
+import { Body, Container } from "./styles";
 import CheckListOfflineService from "../gateway/offline/service/CheckListOfflineService";
 import { IChecklistPost, IChecklistPut } from "../hook/types";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
+import { Footer } from "../components/Footer";
 
 export function Home() {
   const conectionRealm = async () =>
@@ -153,8 +154,10 @@ export function Home() {
   return (
     <Container>
       <Header />
-      <Content />
-      {/*<Footer/> */}
+      <Body>
+        <Content />
+        <Footer/>
+      </Body>
     </Container>
   );
 }

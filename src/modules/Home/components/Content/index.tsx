@@ -2,6 +2,7 @@ import { useCheckList } from '@modules/Home/hook';
 import { IChecklistGet } from '@modules/Home/hook/types';
 import React from 'react';
 import { Text, FlatList } from 'react-native';
+import { Card } from './Card';
 
 import {
   Container, 
@@ -9,13 +10,15 @@ import {
 
 export function Content() {
   const { checkLists } = useCheckList();
+  console.log('checkLists', checkLists)
   return (
     <Container>
       <FlatList
         data={checkLists}
         keyExtractor={item => item._id}
-        renderItem= {({item} : {item : IChecklistGet}) => (
-          <Text style={{color: 'white'}} key={item._id}>{item.farmer.name}</Text>
+        renderItem= {({item}) => (
+          <Card checklist={item as IChecklistGet} key={item._id}/>
+          // <Card checklist={item as IChecklistGet} key={item._id}/>
           // <Card repository={item as Repository} showFavoriteButton={true} />
         )}
         // refreshControl={
