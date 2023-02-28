@@ -127,7 +127,7 @@ export const CheckListProvider = ({ children }: Children) => {
         Alert.alert("Error", "Nao foi possível sincronizar");
       }
     } else {
-      Alert.alert("Error", "Nao há conexao com a internet");
+      Alert.alert("Error", "Sem conexao com a internet");
       checkListService.offline.getAll().then((data) => {
         setCheckLists(data);
       });

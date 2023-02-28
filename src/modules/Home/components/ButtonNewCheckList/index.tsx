@@ -1,3 +1,4 @@
+import { useNavigation } from "@react-navigation/native";
 import React from "react";
 
 import {
@@ -7,10 +8,14 @@ import {
   CreateChecklistButtonIcon,
 } from "./styles";
 
-export function Footer() {
+export function ButtonNewCheckList() {
+  const navigation = useNavigation();
+  
+  const goRegister = () => navigation.navigate("Register")
+
   return (
     <Container>
-      <CreateChecklistButton>
+      <CreateChecklistButton onPress={goRegister}>
         <CreateChecklistButtonIcon/>
         <CreateChecklistButtonText>New CheckList</CreateChecklistButtonText>
       </CreateChecklistButton>

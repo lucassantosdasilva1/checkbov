@@ -16,8 +16,8 @@ export function Header() {
       <Content>
         <Profile />
         <Greetings>
-          <Hello>Hello Farmer</Hello>
-          <InfoText>You are 3 checks unfilled</InfoText>
+          <InfoText>Hello Farmer</InfoText>
+          <Hello>Have a good day</Hello>
         </Greetings>
       </Content>
     </Container>

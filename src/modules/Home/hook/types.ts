@@ -40,8 +40,8 @@ export interface IChecklistPost {
   number_of_cows_head: number;
   had_supervision: boolean;
   location: {
-    latitude: string;
-    longitude: string;
+    latitude: number;
+    longitude: number;
   };
   created_at: Date;
 }

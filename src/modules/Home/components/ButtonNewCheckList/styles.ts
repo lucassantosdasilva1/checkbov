@@ -15,7 +15,10 @@ export const Container = styled.View`
   /* background-color: ${({ theme }) => theme.colors.primary_background}; */
 `;
 
-export const CreateChecklistButton = styled(RectButton)`
+export const CreateChecklistButton =  styled.TouchableOpacity.attrs({
+  activeOpacity: 1,
+  elevation: 5,
+})`
   flex-direction: row;
   width: 100%;
   height: ${RFValue(50)}px;

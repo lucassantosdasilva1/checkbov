@@ -5,7 +5,7 @@ import { getStatusBarHeight } from 'react-native-iphone-x-helper';
 import { RFValue } from 'react-native-responsive-fontsize';
 
 export const Container = styled.View`
-  height: ${RFValue(100)}px;
+  height: ${RFValue(80)}px;
   width: 100%;
 
   background-color: ${({ theme }) => theme.colors.secondary_background};
@@ -35,13 +35,13 @@ export const Greetings = styled.View`
 `;
 
 export const Hello = styled.Text`
-  font-size: ${RFValue(14)}px;
+  font-size: ${RFValue(12)}px;
   font-family: ${({ theme }) => theme.fonts.regular};
   color: ${({ theme }) => theme.colors.primary_text};
 `;
 
 export const InfoText = styled.Text`
-  font-size: ${RFValue(16)}px;
+  font-size: ${RFValue(14)}px;
   font-family: ${({ theme }) => theme.fonts.medium};
   color: ${({ theme }) => theme.colors.primary_text};
 `;
