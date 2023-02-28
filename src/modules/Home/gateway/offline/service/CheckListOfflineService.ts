@@ -36,7 +36,6 @@ const CheckListOfflineService: CheckListOfflineRepository = {
     const realm = await conectionChecklistRealm();
     const checkListDB: any = realm
       .objectForPrimaryKey("checklist", _id)
-      ?.toJSON();
 
     if (!checkListDB) {
       throw new Error("CheckList not found");
@@ -175,6 +174,7 @@ const CheckListOfflineService: CheckListOfflineRepository = {
           longitude: checkList.longitude,
         },
         created_at: checkList.created_at,
+        updated_at: checkList.updated_at,
       };
     });
 
@@ -195,11 +195,11 @@ const CheckListOfflineService: CheckListOfflineRepository = {
         to: checkList.to.name,
         number_of_cows_head: Number(checkList.number_of_cows_head),
         had_supervision: checkList.had_supervision,
-        latitude: checkList.location.latitude,
-        longitude: checkList.location.longitude,
+        latitude: Number(checkList.location.latitude),
+        longitude: Number(checkList.location.longitude),
         created_at: checkList.created_at,
         updated_at: checkList.updated_at,
-        __v: checkList.__v,
+        __v: Number(checkList.__v),
       };
       realm.write(() => {
         realm.create("checklist", checklist);
@@ -222,7 +222,7 @@ const CheckListOfflineService: CheckListOfflineRepository = {
     const persistedCheckList = {
       ActType: 'create',
       syncStatus: 'waiting',
-      _id: UUID.v1(),
+      _id: checkList._id,
       type: checkList.type,
       amount_of_milk_produced: checkList.amount_of_milk_produced,
       farmerName: checkList.farmer.name,
@@ -233,8 +233,8 @@ const CheckListOfflineService: CheckListOfflineRepository = {
       had_supervision: checkList.had_supervision,
       latitude: checkList.location.latitude,
       longitude: checkList.location.longitude,
-      created_at: new Date(),
-      updated_at: new Date(),
+      created_at: checkList.created_at,
+      updated_at: checkList.updated_at,
     }
     realm.write(() => {
       realm.create("checklist", persistedCheckList);

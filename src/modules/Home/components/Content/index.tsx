@@ -10,7 +10,6 @@ import {
 
 export function Content() {
   const { checkLists } = useCheckList();
-  console.log('checkLists', checkLists)
   return (
     <Container>
       <FlatList

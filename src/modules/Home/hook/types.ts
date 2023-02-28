@@ -23,9 +23,13 @@ export interface IChecklistGet {
   __v: number;
 }
 
+export interface IChecklistPostArray {
+  checklist: IChecklistPost[];
+}
+
 export interface IChecklistPost { 
-  _id: string;
-  type: "BPA" | "BPF" | "Antibiotic";
+  _id?: string;
+  type: string;
   amount_of_milk_produced: number;
   farmer: {
     name: string;
@@ -43,7 +47,8 @@ export interface IChecklistPost {
     latitude: number;
     longitude: number;
   };
-  created_at: Date;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface IChecklistPut {
@@ -71,7 +76,7 @@ export interface IChecklistPostOffline {
   ActType?: 'create',
   syncStatus?: 'synced' | 'waiting' | 'error',
 
-  _id: string | Uint8Array;
+  _id: string;
   type: "BPA" | "BPF" | "Antibiotic";
   amount_of_milk_produced: number;
   farmer: {
@@ -160,7 +165,7 @@ export type IChecklistSetDataOffline = {
 
 export type CheckListContext = {
   checkLists: IChecklistGet[];
-  // getAllCheckListsOnline: () => Promise<void>;
+  saveNewCheckList: (data: IChecklistPost[]) => Promise<void>;
   // getAllCheckListsOffline: () => Promise<void>;
   toggleModalOfSelectCheckList: () => void;
 };

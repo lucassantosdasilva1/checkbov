@@ -29,8 +29,11 @@ export const Label = styled(Text)`
 `;
 
 export const ErrorMessage = styled(Text)`
-  color: red;
+  color: ${({ theme }) => theme.colors.secondary_text};
+
+  font-family: ${({ theme }) => theme.fonts.medium};
   font-size: 14px;
+
   margin-top: -16px;
   margin-bottom: 16px;
 `;

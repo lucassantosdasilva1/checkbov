@@ -2,86 +2,27 @@ import React, { useEffect, useState } from "react";
 import { checklistYupResolver } from "@modules/Register/utils/yupValidation";
 import { useForm, Controller } from "react-hook-form";
 
-import {
-  Container,
-  Input,
-  Label,
-  ErrorMessage,
-  SubmitButton,
-  RadioItem,
-  TextRadio,
-} from "./styles";
+import { Container, Label, ErrorMessage } from "./styles";
 import { Button } from "react-native";
 import { CustomTextInput } from "../CustomTextInput";
-import { Radio } from "@ant-design/react-native";
-
+import { IReturnRegisterFormData } from "@modules/Register/hooks/types";
 interface IChecklistPostFormProps {
-  onSubmit: (data: any) => void;
+  onSubmit: (data: IReturnRegisterFormData) => void;
 }
 
-const options = ["BPA", "BPF", "Antibiotic"];
-
-function RenderRadioItem({ onChange, ...props }: any) {
-  return (
-    <>
-      {options.map((option, index) => {
-        console.log("option", option);
-        return (
-          <Radio key={index} {...props} onChange={onChange} value={option}>
-            {option}
-          </Radio>
-        );
-      })}
-    </>
-  );
-}
-
-export const ChecklistPostForm = () => {
+export const ChecklistPostForm = ({onSubmit} : IChecklistPostFormProps) => {
   const {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm({
+  } = useForm<IReturnRegisterFormData>({
     // resolver: checklistYupResolver,
   });
-  const [selectedOptionType, setSelectedOptionType] = useState("BPA");
-  const [selectedOptionHadSuper, setSelectedOptionHadSuper] = useState(false);
 
-  const handleTypeRadioChange = (value: string) => {
-    setSelectedOptionType(value);
-  };
-
-  const handleHadSupervisionRadioChange = (value: boolean) => {
-    setSelectedOptionHadSuper(value);
-  };
-
-  const onSubmit = (data: any) => console.log(data);
-
-  useEffect(() => {
-    // Register all form fields here
-  }, []);
+  // const onSubmit = (data: any) => console.log(data);
 
   return (
     <Container>
-      {/* <Label>Type</Label>
-      <RadioItem
-        checked={selectedOptionType === "BPA"}
-        onChange={() => handleTypeRadioChange("BPA")}
-      >
-        <TextRadio>BPA</TextRadio>
-      </RadioItem>
-      <RadioItem
-        checked={selectedOptionType === "BPF"}
-        onChange={() => handleTypeRadioChange("BPF")}
-      >
-        <TextRadio>BPF</TextRadio>
-      </RadioItem>
-      <RadioItem
-        checked={selectedOptionType === "Antibiotic"}
-        onChange={() => handleTypeRadioChange("Antibiotic")}
-      >
-        <TextRadio>Antibiotic</TextRadio>
-      </RadioItem> */}
       <Label>Type CheckList</Label>
       <Controller
         control={control}
@@ -91,11 +32,10 @@ export const ChecklistPostForm = () => {
         defaultValue=""
         render={({ field: { onChange, onBlur, value } }) => (
           <CustomTextInput
-            keyboardType="numeric"
             onBlur={onBlur}
             onChangeText={onChange}
             value={value.toString()}
-            placeholder="Ex.: 'BPA' or 'BPF' or 'Antibiotic'"
+            placeholder="Ex.: BPA or BPF or Antibiotic"
           />
         )}
         name="type"
@@ -214,7 +154,7 @@ export const ChecklistPostForm = () => {
         rules={{
           required: true,
         }}
-        defaultValue={0}
+        defaultValue={"0"}
         render={({ field: { onChange, onBlur, value } }) => (
           <CustomTextInput
             keyboardType="numeric"
@@ -244,36 +184,18 @@ export const ChecklistPostForm = () => {
             onBlur={onBlur}
             onChangeText={onChange}
             value={value.toString()}
-            placeholder="Ex.: 'true' or 'false'"
+            placeholder="Ex.: true or false"
           />
         )}
-        name="type"
+        name="has_supervision"
       />
-
-      {/* <Label>Had Supervision</Label>
-      <RadioItem
-        checked={selectedOptionHadSuper === true}
-        onChange={() => handleHadSupervisionRadioChange(true)}
-      >
-        <TextRadio>YES</TextRadio>
-      </RadioItem>
-      <RadioItem
-        checked={selectedOptionHadSuper === false}
-        onChange={() => handleHadSupervisionRadioChange(false)}
-      >
-        <TextRadio>NO</TextRadio>
-      </RadioItem>
-      {errors.had_supervision && (
-        <ErrorMessage>{errors.had_supervision.message?.toString()}</ErrorMessage>
-      )} */}
-
       <Label>Latitude</Label>
       <Controller
         control={control}
         rules={{
           required: true,
         }}
-        defaultValue={0}
+        defaultValue={"0"}
         render={({ field: { onChange, onBlur, value } }) => (
           <CustomTextInput
             keyboardType="numeric"
@@ -294,7 +216,7 @@ export const ChecklistPostForm = () => {
         rules={{
           required: true,
         }}
-        defaultValue={0}
+        defaultValue={"0"}
         render={({ field: { onChange, onBlur, value } }) => (
           <CustomTextInput
             keyboardType="numeric"

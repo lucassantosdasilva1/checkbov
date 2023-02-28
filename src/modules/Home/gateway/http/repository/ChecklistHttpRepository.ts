@@ -4,7 +4,7 @@ import { AxiosPromise } from "axios";
 export default interface IChecklistHttpRepository {
   getAll: () => AxiosPromise<IChecklistGet[]>;
   get: (id: string) => AxiosPromise<IChecklistGet>;
-  post: (data: IChecklistPost) => AxiosPromise;
+  post: (data: any) => AxiosPromise;
   put: (id: string, data: IChecklistPut) => AxiosPromise;
   delete: (id: string) => AxiosPromise;
 }
