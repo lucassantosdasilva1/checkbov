@@ -17,13 +17,16 @@ const checkListService: IRepoService = {
     delete: ChecklistHttpService.delete,
   },
   offline: {
-    getAll: CheckListOfflineService.getAll,
     getById: CheckListOfflineService.getById,
-    getDeleteds: CheckListOfflineService.getDeleteds,
-    addCheckListsHttp: CheckListOfflineService.addCheckListsHttp,
+    getAll: CheckListOfflineService.getAll,
     create: CheckListOfflineService.create,
     update: CheckListOfflineService.update,
     deleteById: CheckListOfflineService.deleteById,
+    addCheckListsHttp: CheckListOfflineService.addCheckListsHttp, 
+    getCreates: CheckListOfflineService.getCreates,
+    getUpdates: CheckListOfflineService.getUpdates,
+    getDeleteds: CheckListOfflineService.getDeleteds,
+    setChangeStatus: CheckListOfflineService.setChangeStatus,
   },
 };
 

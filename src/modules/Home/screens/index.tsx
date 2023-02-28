@@ -60,11 +60,6 @@ export function Home() {
   
   async function handleEditOrder(id: string, checklist: IChecklistPut) {
       await CheckListOfflineService.update(id, checklist);
-      Toast.show({
-        type: "success",
-        text1: "Sucesso",
-        text2: "Checklist editado com sucesso",
-    })
   ///falta testar a funcção de deletar
   ///façta testar a funcao de editar
   }

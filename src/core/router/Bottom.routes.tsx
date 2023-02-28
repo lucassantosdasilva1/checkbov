@@ -39,26 +39,7 @@ export default function BottomRouter() {
           ),
         }}
       />
-      <Screen
-        name="Outro"
-        component={Home}
-        options={{
-          tabBarLabel: "Home",
-          tabBarIcon: ({ size, color }) => (
-            <AntDesign name="home" size={size} color={color} />
-          ),
-        }}
-      />
-      <Screen
-        name="Outro2"
-        component={Home}
-        options={{
-          tabBarLabel: "Home",
-          tabBarIcon: ({ size, color }) => (
-            <AntDesign name="home" size={size} color={color} />
-          ),
-        }}
-      />
+
     </Navigator>
   );
 }

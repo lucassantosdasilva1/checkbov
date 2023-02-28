@@ -68,10 +68,10 @@ export interface IChecklistPut {
 }
 
 export interface IChecklistPostOffline { 
-  ActType: 'create',
-  syncStatus: 'synced' | 'waiting' | 'error',
+  ActType?: 'create',
+  syncStatus?: 'synced' | 'waiting' | 'error',
 
-  _id: string;
+  _id: string | Uint8Array;
   type: "BPA" | "BPF" | "Antibiotic";
   amount_of_milk_produced: number;
   farmer: {
@@ -93,6 +93,7 @@ export interface IChecklistPostOffline {
   created_at: Date;
 }
 export interface IChecklistPutOffline {
+  _id: string,
   ActType?: 'update' | 'create' | 'delete',
   syncStatus?: 'synced' | 'waiting' | 'error',
   type: "BPA" | "BPF" | "Antibiotic";

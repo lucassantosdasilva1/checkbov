@@ -10,7 +10,7 @@ import {
   Roboto_400Regular,
   Roboto_500Medium,
 } from "@expo-google-fonts/roboto";
-import { StatusBar } from "react-native";
+import { StatusBar, Text } from "react-native";
 
 export default function App() {
   const [loadedFonts] = useFonts({
@@ -24,7 +24,7 @@ export default function App() {
 
   return (
     <>
-      {!loadedFonts ? <AppLoading /> : (
+      {!loadedFonts ? <Text>Carregando</Text> : (
         <>
           <ThemeProvider theme={theme}>
             <StatusBar barStyle="light-content" backgroundColor="transparent" translucent/>

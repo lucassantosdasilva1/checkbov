@@ -13,9 +13,9 @@ export function Content() {
     <Container>
       <FlatList
         data={checkLists}
-        keyExtractor={item => String(item)}
+        keyExtractor={item => item._id}
         renderItem= {({item} : {item : IChecklistGet}) => (
-          <Text style={{color: 'white'}}>{item.farmer.name}</Text>
+          <Text style={{color: 'white'}} key={item._id}>{item.farmer.name}</Text>
           // <Card repository={item as Repository} showFavoriteButton={true} />
         )}
         // refreshControl={
