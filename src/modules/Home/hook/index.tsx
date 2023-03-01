@@ -50,6 +50,7 @@ export const CheckListProvider = ({ children }: Children) => {
             checkListService.offline.deleteById(checklist._id);
           });
       });
+      console.log("1")
       return true;
     } catch (error: any) {
       console.log("ERROR: ON UPLOAD DELETE-CHECKLISTS OFFLINE =>", error);
@@ -60,12 +61,14 @@ export const CheckListProvider = ({ children }: Children) => {
   const upOfflineUpdatedCheckLists = async () => {
     const checkListOffline = await checkListService.offline.getUpdates();
 
-    
+    const putData = checkListOffline.filter(
+      (item) => item.syncStatus == "waiting" && item.ActType == "update"
+    );
 
     console.log("entrou.aqui para subir as ediçoes");
 
     try {
-      checkListOffline.map(async (checklist) => {
+      putData.map(async (checklist) => {
         const formattedtoPut = {
           type: checklist.type,
           amount_of_milk_produced: Number(checklist.amount_of_milk_produced),
@@ -109,6 +112,7 @@ export const CheckListProvider = ({ children }: Children) => {
             }
           });
       });
+      console.log("2")
       return true;
     } catch (error: any) {
       console.log("ERROR: ON UPLOAD UPDATE-CHECKLIST OFFLINE =>", error);
@@ -136,6 +140,7 @@ export const CheckListProvider = ({ children }: Children) => {
             );
           });
       });
+      console.log("3")
       return true;
     } catch (error: any) {
       console.log("ERROR: ON UPLOAD CREATE-CHECKLIST OFFLINE =>", error);
@@ -143,59 +148,74 @@ export const CheckListProvider = ({ children }: Children) => {
     }
   };
 
-  const downAddCheckListsHTTPtoDB = async (CheckListsHTTP: IChecklistGet[]) => {
+  const downloadCheckListsHTTPtoDB = async (
+    CheckListsHTTP: IChecklistGet[]
+  ) => {
     const checkListOffline = await checkListService.offline.getAll();
 
-    const arrayCheckListsHTTPThatWillBeAdded = CheckListsHTTP.filter(
-      (item1) => !checkListOffline.some((item2) => item1._id === item2._id)
-    );
+    // atualiza os dados locais com os que foram alterados no servidor
+    let arrayCheckListsHTTPThatWillBeUpdated = [];
 
-    const arrayCheckListsHTTPThatWillBeUpdated = CheckListsHTTP.filter(
-      (item1) => checkListOffline.some((item2) => item1._id === item2._id)
-    );
-
-    arrayCheckListsHTTPThatWillBeAdded.map(async (checklist) => {
-      await checkListService.offline.addCheckListsHttp([checklist]);
-    });
+    for (let i = 0; i < CheckListsHTTP.length; i++) {
+      for (let j = 0; j < checkListOffline.length; j++) {
+        //comparação para preencher o array com os checklists que serão atualizados a partir do HTTP
+        if (CheckListsHTTP[i]._id == checkListOffline[j]._id) {
+          if (
+            CheckListsHTTP[i].updated_at.getTime() >
+            checkListOffline[j].updated_at.getTime()
+          ) {
+            console.log(
+              "entrou aqui para atualizar o BD a partir do HTTP I",
+              CheckListsHTTP[i]
+            );
+            console.log(
+              "entrou aqui para atualizar o BD a partir do HTTP J",
+              CheckListsHTTP[i]
+            );
+            arrayCheckListsHTTPThatWillBeUpdated.push(CheckListsHTTP[i]);
+          }
+        }
+      }
+    }
 
     arrayCheckListsHTTPThatWillBeUpdated.map(async (checklist) => {
-      await checkListService.offline.updateThenCreateOnline(
-        checklist._id,
-        checklist,
-        String(checklist.updated_at)
-      );
+      try {
+        await checkListService.offline.updateThenUpdateOnline(
+          checklist._id,
+          checklist,
+          String(checklist.updated_at)
+        );
+      } catch (error: any) {
+        console.log(
+          "ERROR: ON SET UPDATE-CHECKLIST FROM HTTP TO OFFLINE =>",
+          error
+        );
+      }
     });
 
+    //cria dados locais com os que foram criados no servidor
+    let arrayCheckListsHTTPThatWillBeCreated = [];
+    if (checkListOffline.length == 0) {
+      CheckListsHTTP.map(async (checklist) => {
+        try {
+          await checkListService.offline.addCheckListsHttp([checklist]);
+        } catch (error: any) {
+          console.log(
+            "ERROR: ON SET CREATE-CHECKLIST FROM HTTP TO OFFLINE =>",
+            error
+          );
+        }
+      });
+    } else {
+      //aqui ele salva os itens que nao tem no BD local
+      const arrayCheckListsHTTPThatWillBeCreated = CheckListsHTTP.filter(
+        async (item) => {
+          !checkListOffline.includes(item);
+        }
+      );
+    }
+
     return true;
-
-    // checkListOffline.forEach((checklist) => {
-    // })
-
-    // // Filter the checklists that are in the server but not in the offline database and save then in the offline database
-    // const filteredArray = CheckListsHTTP.filter((item1) =>
-    //   checkListOffline.filter((item2) => item1._id === item2._id)
-    //   // checkListOffline.some((item2) => item1._id === item2._id)
-    // );
-
-    // filteredArray.map(async (checklist) => {
-    //   Alert.alert("dadosFiltrados", checklist._id);
-    // });
-    // if (filteredArray.length > 0) {
-    //   await checkListService.offline
-    //     .addCheckListsHttp(filteredArray)
-    //     .then(() => {
-    //       console.log("ADDED CHECKLISTS HTTP TO DB");
-    //     });
-    // } else {
-    //   console.log("NO CHECKLISTS HTTP TO ADD TO DB");
-    // }
-
-    // checkListService.offline.addCheckListsHttp(CheckListsHTTP).then(() => {
-    //   console.log("ADDED CHECKLISTS HTTP TO DB");
-    // });
-
-    // TODO Filter the checklists that was update in the server but not in the offline database and save then in the offline database
-    // TODO Filter the checklists that was delete in the server but not in the offline database and delete then in the offline database
   };
 
   // When the app is connected to the internet, it will to do 3 upload Functions
@@ -208,16 +228,25 @@ export const CheckListProvider = ({ children }: Children) => {
       const resultUp3 = await upOfflineCreatedCheckLists();
 
       if (resultUp1 && resultUp2 && resultUp3) {
-        checkListService.http.getAll().then(({ data }) => {
-          setCheckLists(data);
+        setTimeout((async () => {
           try {
-            (async () => {
-              await downAddCheckListsHTTPtoDB(data);
-            })();
+            await axios
+              .get("http://challenge-front-end.bovcontrol.com/v1/checklist")
+              .then(({ data }) => {
+                
+                setCheckLists(data);
+                try {
+                  (async () => {
+                    await downloadCheckListsHTTPtoDB(data);
+                  })();
+                } catch (error: any) {
+                  console.log("ERROR: ADD EXISTING CHECKLIST OFFLINE =>", error);
+                }
+              });
           } catch (error: any) {
-            console.log("ERROR: ADD EXISTING CHECKLIST OFFLINE =>", error);
+            console.log("ERROR: ON DOWNLOAD CHECKLISTS FROM HTTP =>", error);
           }
-        });
+        }), 4000);
       } else {
         Alert.alert("Error", "Nao foi possível sincronizar");
       }
@@ -286,7 +315,10 @@ export const CheckListProvider = ({ children }: Children) => {
             // await checkListService.http.post(parsedTypeAPI).then(async () => {
             console.log("SUCCESS NEW CHECKLIST UPDATED ONLINE");
             try {
-              await checkListService.offline.updateThenCreateOnline(String(id), data);
+              await checkListService.offline.updateThenUpdateOnline(
+                String(id),
+                data
+              );
             } catch (error: any) {
               console.log("ERROR: ao atualizar BD =>", error);
             }
@@ -321,6 +353,7 @@ export const CheckListProvider = ({ children }: Children) => {
   }
 
   async function deleteCheckList(id: string) {
+    console.log("deleteid antes de chamar a api", id);
     if (isConnected && isInternetReachable) {
       try {
         await axios
@@ -328,15 +361,22 @@ export const CheckListProvider = ({ children }: Children) => {
             `http://challenge-front-end.bovcontrol.com/v1/checklist/${id}`
           )
           .then(async () => {
-            await checkListService.offline.deleteById(id);
-
-            axios
-              .get("http://challenge-front-end.bovcontrol.com/v1/checklist")
-              .then(({ data }) => {
-                setCheckLists(data);
-              });
-            // await onConectJob();
             console.log("SUCCESS NEW CHECKLIST DELETED ONLINE");
+            setCheckLists(checkLists.filter((item) => item._id !== id));
+
+            try {
+              await checkListService.offline.deleteThenDeleteOnline(String(id));
+              console.log("SUCCESS NEW CHECKLIST DELETED OF DATABASE");
+            } catch (error: any) {
+              console.log("ERROR: ao deletar do BD =>", error);
+            }
+
+            // axios
+            //   .get("http://challenge-front-end.bovcontrol.com/v1/checklist")
+            //   .then(({ data }) => {
+            //     setCheckLists(data);
+            //   });
+            // await onConectJob();
           });
       } catch (error: any) {
         console.log("ERROR: DELETE CHECKLIST ONLINE =>", error.response);
@@ -356,6 +396,10 @@ export const CheckListProvider = ({ children }: Children) => {
     }
   }
 
+  async function onRefresh() {
+    await onConectJob()
+  }
+
   useEffect(() => {
     (async () => {
       await onConectJob();
@@ -370,6 +414,7 @@ export const CheckListProvider = ({ children }: Children) => {
         updateCheckList,
         deleteCheckList,
         toggleModalOfSelectCheckList,
+        onRefresh,
       }}
     >
       {children}

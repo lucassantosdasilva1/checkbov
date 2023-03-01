@@ -317,7 +317,7 @@ const CheckListOfflineService: CheckListOfflineRepository = {
     });
   },
 
-  updateThenCreateOnline: async (_id: string, checkList: IChecklistPut, updateDate?: string) => {
+  updateThenUpdateOnline: async (_id: string, checkList: IChecklistPut, updateDate?: string) => {
     const realm = await conectionChecklistRealm();
 
     const data: any = realm.objectForPrimaryKey("checklist", _id);
@@ -353,9 +353,17 @@ const CheckListOfflineService: CheckListOfflineRepository = {
       data.had_supervision = checkList.had_supervision;
       data.latitude = checkList.location.latitude;
       data.longitude = checkList.location.longitude;
-      data.updated_at = updateDate;
+      if(updateDate) data.updated_at = updateDate;
   });
-  }
+  },
+
+  deleteThenDeleteOnline: async (_id: string) => {
+    const realm = await conectionChecklistRealm();
+    const checkList = realm.objectForPrimaryKey("checklist", _id);
+    realm.write(() => {
+      realm.delete(checkList);
+    });
+  },
 };
 
 export default CheckListOfflineService;

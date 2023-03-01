@@ -14,6 +14,7 @@ import {
 import { useCheckList } from '@modules/Home/hook';
 import moment from 'moment';
 import { Toast } from '@ant-design/react-native';
+import { HeaderWithTitle } from '@shared/components/HeaderWithTitle';
 
 export function Register() {
   const { saveNewCheckList } = useCheckList()
@@ -67,7 +68,7 @@ export function Register() {
 
   return (
     <Container>
-      <Header />
+      <HeaderWithTitle name='New CheckList' />
       <ScrollView
         contentContainerStyle={{
           flexGrow: 1,

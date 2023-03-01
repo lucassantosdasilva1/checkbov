@@ -1,6 +1,7 @@
 import styled from 'styled-components/native';
 import profile from "@assets/images/profile.png";
 import { getStatusBarHeight } from 'react-native-iphone-x-helper';
+import { FontAwesome } from "@expo/vector-icons";
 
 import { RFValue } from 'react-native-responsive-fontsize';
 
@@ -21,6 +22,7 @@ export const Container = styled.View`
 export const Content = styled.View`
   flex-direction: row;
   
+  justify-content: space-between;
   align-items: center;
   padding: 0 16px;
 
@@ -31,6 +33,7 @@ export const Greetings = styled.View`
   flex: 1;
 
   margin-left: 16px;
+
   justify-content: center;
 `;
 
@@ -51,4 +54,22 @@ export const Profile = styled.Image.attrs({
 })`
   width: ${RFValue(50)}px;
   height: ${RFValue(50)}px;
+`;
+
+export const RefreshIcon = styled(FontAwesome).attrs({
+  name: "refresh",
+  size: RFValue(20),
+  color: "#fff",
+})``;
+
+export const RefreshButton = styled.TouchableOpacity`
+  width: ${RFValue(35)}px;
+  height: ${RFValue(35)}px;
+
+  align-items: center;
+  justify-content: center;
+  border-radius: 25px;
+
+  margin-right: ${RFValue(10)}px;
+  background-color: ${({ theme }) => theme.colors.secondary_button};
 `;

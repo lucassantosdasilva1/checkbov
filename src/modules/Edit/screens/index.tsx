@@ -13,6 +13,7 @@ import {
 } from './styles';
 import { useCheckList } from '@modules/Home/hook';
 import moment from 'moment';
+import { HeaderWithTitle } from '@shared/components/HeaderWithTitle';
 
 interface params {
   editValues: IEditProps
@@ -74,7 +75,7 @@ export function Edit() {
 
   return (
     <Container>
-      <Header />
+      <HeaderWithTitle name='Edit CheckList' />
       <ScrollView
         contentContainerStyle={{
           flexGrow: 1,

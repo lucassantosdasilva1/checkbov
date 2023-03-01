@@ -8,6 +8,7 @@ export const Container = styled.View`
   width: 100%;
   padding: 0 15px;
   background-color: ${({theme}) => theme.colors.primary_background};
+  padding-bottom: 10px;
 `;
 
 export const Input = styled(TextInput)`

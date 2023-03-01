@@ -170,4 +170,5 @@ export type CheckListContext = {
   deleteCheckList: (id: string) => Promise<void>;
   // getAllCheckListsOffline: () => Promise<void>;
   toggleModalOfSelectCheckList: () => void;
+  onRefresh: () => void;
 };
