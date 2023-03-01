@@ -1,7 +1,12 @@
 import { useState } from "react";
 // import { Modal } from "../components/modal";
 import { Children } from "@core/hooks/globalTypes";
-import { IChecklistGet, CheckListContext, IChecklistPost, IChecklistPut } from "./types";
+import {
+  IChecklistGet,
+  CheckListContext,
+  IChecklistPost,
+  IChecklistPut,
+} from "./types";
 import { checkListService } from "../services/Repo.service";
 import { useNetInfo } from "@react-native-community/netinfo";
 import React, { createContext, useEffect, useContext } from "react";
@@ -16,11 +21,11 @@ export const CheckListProvider = ({ children }: Children) => {
   const [checkLists, setCheckLists] = useState<IChecklistGet[]>([]);
 
   const parseChecklistAddingCHECKLISTonObject = (data: IChecklistPost[]) => {
-      const parsedTypeAPI = {
-        checklists: [...data],
-      };
-    return parsedTypeAPI
-  }
+    const parsedTypeAPI = {
+      checklists: [...data],
+    };
+    return parsedTypeAPI;
+  };
 
   const { isConnected, isInternetReachable, details } = useNetInfo();
 
@@ -37,9 +42,13 @@ export const CheckListProvider = ({ children }: Children) => {
 
     try {
       checkListOffline.map(async (checklist) => {
-        checkListService.http.delete(checklist._id).then(() => {
-          checkListService.offline.deleteById(checklist._id);
-        });
+        axios
+          .delete(
+            `http://challenge-front-end.bovcontrol.com/v1/checklist/${checklist._id}`
+          )
+          .then(() => {
+            checkListService.offline.deleteById(checklist._id);
+          });
       });
       return true;
     } catch (error: any) {
@@ -53,9 +62,14 @@ export const CheckListProvider = ({ children }: Children) => {
 
     try {
       checkListOffline.map(async (checklist) => {
-        checkListService.http.put(checklist._id, checklist).then(() => {
-          checkListService.offline.setChangeStatus(checklist._id, "synced");
-        });
+        await axios
+          .put(
+            `http://challenge-front-end.bovcontrol.com/v1/checklist/${checklist._id}`,
+            checklist
+          )
+          .then(() => {
+            checkListService.offline.setChangeStatus(checklist._id, "synced");
+          });
       });
       return true;
     } catch (error: any) {
@@ -69,19 +83,20 @@ export const CheckListProvider = ({ children }: Children) => {
 
     try {
       checkListOffline.map(async (checklist) => {
-        const parsedTypeAPI = {
-          checkLists: [
-            {
-              ...checklist,
-            },
-          ],
-        };
-        checkListService.http.post(parsedTypeAPI).then(() => {
-          checkListService.offline.setChangeStatus(
-            String(checklist._id),
-            "synced"
-          );
-        });
+        const parsedTypeAPI = parseChecklistAddingCHECKLISTonObject([
+          checklist,
+        ]);
+        await axios
+          .post(
+            "http://challenge-front-end.bovcontrol.com/v1/checklist",
+            parsedTypeAPI
+          )
+          .then(() => {
+            checkListService.offline.setChangeStatus(
+              String(checklist._id),
+              "synced"
+            );
+          });
       });
       return true;
     } catch (error: any) {
@@ -148,22 +163,22 @@ export const CheckListProvider = ({ children }: Children) => {
 
   async function saveNewCheckList(data: IChecklistPost[]) {
     //this parse is to add the key "checklists" to the object
-    const parsedTypeAPI = parseChecklistAddingCHECKLISTonObject(data)
+    const parsedTypeAPI = parseChecklistAddingCHECKLISTonObject(data);
 
     if (isConnected && isInternetReachable) {
       try {
-        await axios.post("http://challenge-front-end.bovcontrol.com/v1/checklist",
-        parsedTypeAPI
-        ).then(async () => {  
-        // await checkListService.http.post(parsedTypeAPI).then(async () => {
-          console.log("Deu foi certo pai")
-          await onConectJob();
-        });
+        await axios
+          .post(
+            "http://challenge-front-end.bovcontrol.com/v1/checklist",
+            parsedTypeAPI
+          )
+          .then(async () => {
+            // await checkListService.http.post(parsedTypeAPI).then(async () => {
+            console.log("SUCCESS NEW CHECKLIST SAVE ONLINE");
+            await onConectJob();
+          });
       } catch (error: any) {
-        console.log(
-          "ERROR: CREATE NEW CHECKLIST ONLINE =>",
-          error.response
-        );
+        console.log("ERROR: CREATE NEW CHECKLIST ONLINE =>", error.response);
       }
     } else {
       try {
@@ -172,28 +187,30 @@ export const CheckListProvider = ({ children }: Children) => {
           Alert.alert("Salvo offline");
         });
       } catch (error: any) {
-        console.log("ERROR: CREATE NEW CHECKLIST OFFLINE =>", error.response.message);
+        console.log(
+          "ERROR: CREATE NEW CHECKLIST OFFLINE =>",
+          error.response.message
+        );
       }
     }
   }
-  
-  async function updateCheckList(id: string, data: IChecklistPut) {
 
-    console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$", data)
+  async function updateCheckList(id: string, data: IChecklistPut) {
 
     if (isConnected && isInternetReachable) {
       try {
-        await axios.put(`http://challenge-front-end.bovcontrol.com/v1/checklist/${id}`, data
-        ).then(async () => {  
-        // await checkListService.http.post(parsedTypeAPI).then(async () => {
-          console.log("Deu foi certo pai")
-          await onConectJob();
-        });
+        await axios
+          .put(
+            `http://challenge-front-end.bovcontrol.com/v1/checklist/${id}`,
+            data
+          )
+          .then(async () => {
+            // await checkListService.http.post(parsedTypeAPI).then(async () => {
+              console.log("SUCCESS NEW CHECKLIST UPDATED ONLINE");
+            await onConectJob();
+          });
       } catch (error: any) {
-        console.log(
-          "ERROR: UPDATE CHECKLIST ONLINE =>",
-          error.response
-        );
+        console.log("ERROR: UPDATE CHECKLIST ONLINE =>", error.response);
       }
     } else {
       try {
@@ -202,7 +219,10 @@ export const CheckListProvider = ({ children }: Children) => {
           Alert.alert("Salvo offline");
         });
       } catch (error: any) {
-        console.log("ERROR: CREATE NEW CHECKLIST OFFLINE =>", error.response.message);
+        console.log(
+          "ERROR: CREATE NEW CHECKLIST OFFLINE =>",
+          error.response.message
+        );
       }
     }
   }
@@ -210,23 +230,28 @@ export const CheckListProvider = ({ children }: Children) => {
   async function deleteCheckList(id: string) {
     if (isConnected && isInternetReachable) {
       try {
-        await axios.delete(`http://challenge-front-end.bovcontrol.com/v1/checklist/${id}`).then(async () => {
-          await onConectJob();
-        });
+        await axios
+          .delete(
+            `http://challenge-front-end.bovcontrol.com/v1/checklist/${id}`
+          )
+          .then(async () => {
+            await onConectJob();
+            console.log("SUCCESS NEW CHECKLIST DELETED ONLINE");
+          });
       } catch (error: any) {
-        console.log(
-          "ERROR: DELETE CHECKLIST ONLINE =>",
-          error.response
-        );
+        console.log("ERROR: DELETE CHECKLIST ONLINE =>", error.response);
       }
     } else {
       try {
         await checkListService.offline.deleteById(id).then(async () => {
           await onConectJob();
-          Alert.alert("Salvo offline");
+          console.log("SUCCESS NEW CHECKLIST DELETED OFFLINE");
         });
       } catch (error: any) {
-        console.log("ERROR: DELETE CHECKLIST OFFLINE =>", error.response.message);
+        console.log(
+          "ERROR: DELETE CHECKLIST OFFLINE =>",
+          error.response.message
+        );
       }
     }
   }
