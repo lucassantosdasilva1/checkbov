@@ -167,6 +167,7 @@ export type CheckListContext = {
   checkLists: IChecklistGet[];
   saveNewCheckList: (data: IChecklistPost[]) => Promise<void>;
   updateCheckList: (id: string, data: IChecklistPut) => Promise<void>;
+  deleteCheckList: (id: string) => Promise<void>;
   // getAllCheckListsOffline: () => Promise<void>;
   toggleModalOfSelectCheckList: () => void;
 };

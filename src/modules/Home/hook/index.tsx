@@ -159,7 +159,6 @@ export const CheckListProvider = ({ children }: Children) => {
           console.log("Deu foi certo pai")
           await onConectJob();
         });
-        return true
       } catch (error: any) {
         console.log(
           "ERROR: CREATE NEW CHECKLIST ONLINE =>",
@@ -190,7 +189,6 @@ export const CheckListProvider = ({ children }: Children) => {
           console.log("Deu foi certo pai")
           await onConectJob();
         });
-        return true
       } catch (error: any) {
         console.log(
           "ERROR: UPDATE CHECKLIST ONLINE =>",
@@ -209,75 +207,34 @@ export const CheckListProvider = ({ children }: Children) => {
     }
   }
 
-  // const getAllCheckLists = async () => {
-  //   if (isConnected) {
-  //     try {
-  //       const { data } = await checkListService.http.getAll();
-  //       setCheckLists(data);
-  //       //set checlist to offline
-  //       data.map(async (checklist) => {
-  //         try {
-  //           await CheckListOfflineService.addCheckListsHttp(checklist);
-  //         } catch (error: any) {
-  //           console.log("ERROR: ADD EXISTING CHECKLIST OFFLINE =>", error);
-  //         }
-  //       });
-  //     } catch (error: any) {
-  //       console.log("ERROR: GET ALL CHECKLIST ONLINE =>", error);
-  //     }
-  //   } else {
-  //     try {
-
-  //       const checklists = await checkListService.offline.getAll();
-  //       setCheckLists(checklists);
-  //     } catch (error: any) {
-  //       console.log("ERROR: GET ALL CHECKLISTS OFFLINE =>", error);
-  //     }
-  //   }
-  // };
-
-  const getAllCheckListsOffline = async () => {
-    // try {
-    //   const checklists = await checkListService.offline.getChecklists("repositories");
-    //   setCheckLists(checklists);
-    // } catch (error: any) {
-    //   console.log("ERROR: GET ALL CHECKLISTS OFFLINE =>", error);
-    // }
-  };
+  async function deleteCheckList(id: string) {
+    if (isConnected && isInternetReachable) {
+      try {
+        await axios.delete(`http://challenge-front-end.bovcontrol.com/v1/checklist/${id}`).then(async () => {
+          await onConectJob();
+        });
+      } catch (error: any) {
+        console.log(
+          "ERROR: DELETE CHECKLIST ONLINE =>",
+          error.response
+        );
+      }
+    } else {
+      try {
+        await checkListService.offline.deleteById(id).then(async () => {
+          await onConectJob();
+          Alert.alert("Salvo offline");
+        });
+      } catch (error: any) {
+        console.log("ERROR: DELETE CHECKLIST OFFLINE =>", error.response.message);
+      }
+    }
+  }
 
   useEffect(() => {
     (async () => {
       await onConectJob();
-      // await getAllCheckLists().then(() => {
-      //   console.log("StateCHECKLISTS =>", checkLists);
-      // });
     })();
-    // (() => {
-    //   const unsubscribe = addEventListener(state => {
-    //     if (state.isConnected && state.isInternetReachable) {
-    //       console.log("online");
-    //       // fazer alguma coisa aqui quando estiver online
-    //     } else {
-    //       console.log("offline");
-    //       Toast.show(
-    //         {
-    //           type: "error",
-    //           text1: "Error",
-    //           text2: "Error al sincronizar",
-    //           visibilityTime: 4000,
-    //           autoHide: true,
-    //           topOffset: 30,
-    //           bottomOffset: 40,
-    //         }
-    //       )
-    //       // fazer alguma coisa aqui quando estiver offline
-    //     }
-    //   });
-
-    //   return () => {
-    //     unsubscribe();
-    //   };
-    // })();
   }, [isConnected, isInternetReachable]);
 
   return (
@@ -286,6 +243,7 @@ export const CheckListProvider = ({ children }: Children) => {
         checkLists,
         saveNewCheckList,
         updateCheckList,
+        deleteCheckList,
         toggleModalOfSelectCheckList,
       }}
     >
