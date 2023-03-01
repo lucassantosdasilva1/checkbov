@@ -19,10 +19,12 @@ interface params {
 }
 
 export function Edit() {
-  const { saveNewCheckList } = useCheckList()
+  const { updateCheckList } = useCheckList()
   
   const route = useRoute();
   const {editValues}  = route.params as params;
+
+  console.log("editValues@@@@@@@@@@@@@@@@@@2", editValues)
 
   const navigation = useNavigation();
 
@@ -61,12 +63,13 @@ export function Edit() {
   const onSubmitButton = (data: IReturnRegisterFormData) => {
     const parsedData = parsePutData(data);
 
-    const array = [parsedData];
+    // const array = [parsedData];
+   
 
-    // updateCheckList(dataCameRoute.id, array)
-    // .then(() => {
-    //   navigation.navigate('Home');
-    // });
+    updateCheckList(editValues._id, parsedData)
+    .then(() => {
+      navigation.navigate('Home');
+    });
   }
 
   return (

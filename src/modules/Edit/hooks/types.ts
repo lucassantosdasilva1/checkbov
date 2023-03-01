@@ -14,6 +14,6 @@ export interface IReturnRegisterFormData {
 }  
 
 export interface IEditProps {
-  id: string;
+  _id: string;
   data: IChecklistPut;
 }

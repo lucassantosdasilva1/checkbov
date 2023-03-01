@@ -166,6 +166,7 @@ export type IChecklistSetDataOffline = {
 export type CheckListContext = {
   checkLists: IChecklistGet[];
   saveNewCheckList: (data: IChecklistPost[]) => Promise<void>;
+  updateCheckList: (id: string, data: IChecklistPut) => Promise<void>;
   // getAllCheckListsOffline: () => Promise<void>;
   toggleModalOfSelectCheckList: () => void;
 };
