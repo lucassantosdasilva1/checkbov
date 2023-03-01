@@ -60,15 +60,53 @@ export const CheckListProvider = ({ children }: Children) => {
   const upOfflineUpdatedCheckLists = async () => {
     const checkListOffline = await checkListService.offline.getUpdates();
 
+    
+
+    console.log("entrou.aqui para subir as ediçoes");
+
     try {
       checkListOffline.map(async (checklist) => {
+        const formattedtoPut = {
+          type: checklist.type,
+          amount_of_milk_produced: Number(checklist.amount_of_milk_produced),
+          number_of_cows_head: Number(checklist.number_of_cows_head),
+          had_supervision: checklist.had_supervision,
+          farmer: {
+            name: checklist.farmer.name,
+            city: checklist.farmer.city,
+          },
+          from: {
+            name: checklist.from.name,
+          },
+          to: {
+            name: checklist.to.name,
+          },
+          location: {
+            latitude: Number(checklist.location.latitude),
+            longitude: Number(checklist.location.longitude),
+          },
+        };
+
+        console.log("updatesLIST ===>", formattedtoPut);
         await axios
           .put(
             `http://challenge-front-end.bovcontrol.com/v1/checklist/${checklist._id}`,
-            checklist
+            formattedtoPut
           )
-          .then(() => {
-            checkListService.offline.setChangeStatus(checklist._id, "synced");
+          .then(async () => {
+            try {
+              await checkListService.offline.setChangeStatus(
+                checklist._id,
+                "synced"
+              );
+              console.log("deu foi certo pai a edicao");
+              // await onConectJob();
+            } catch (error: any) {
+              console.log(
+                "ERROR: ON UPLOAD UPDATE-CHECKLIST OFFLINE =>",
+                error
+              );
+            }
           });
       });
       return true;
@@ -108,23 +146,53 @@ export const CheckListProvider = ({ children }: Children) => {
   const downAddCheckListsHTTPtoDB = async (CheckListsHTTP: IChecklistGet[]) => {
     const checkListOffline = await checkListService.offline.getAll();
 
-    // Filter the checklists that are in the server but not in the offline database and save then in the offline database
-    const filteredArray = CheckListsHTTP.filter((item1) =>
-      checkListOffline.some((item2) => item1._id === item2._id)
+    const arrayCheckListsHTTPThatWillBeAdded = CheckListsHTTP.filter(
+      (item1) => !checkListOffline.some((item2) => item1._id === item2._id)
     );
 
-    filteredArray.map(async (checklist) => {
-      Alert.alert("dadosFiltrados", checklist._id);
+    const arrayCheckListsHTTPThatWillBeUpdated = CheckListsHTTP.filter(
+      (item1) => checkListOffline.some((item2) => item1._id === item2._id)
+    );
+
+    arrayCheckListsHTTPThatWillBeAdded.map(async (checklist) => {
+      await checkListService.offline.addCheckListsHttp([checklist]);
     });
-    if (filteredArray.length > 0) {
-      await checkListService.offline
-        .addCheckListsHttp(filteredArray)
-        .then(() => {
-          console.log("ADDED CHECKLISTS HTTP TO DB");
-        });
-    } else {
-      console.log("NO CHECKLISTS HTTP TO ADD TO DB");
-    }
+
+    arrayCheckListsHTTPThatWillBeUpdated.map(async (checklist) => {
+      await checkListService.offline.updateThenCreateOnline(
+        checklist._id,
+        checklist,
+        String(checklist.updated_at)
+      );
+    });
+
+    return true;
+
+    // checkListOffline.forEach((checklist) => {
+    // })
+
+    // // Filter the checklists that are in the server but not in the offline database and save then in the offline database
+    // const filteredArray = CheckListsHTTP.filter((item1) =>
+    //   checkListOffline.filter((item2) => item1._id === item2._id)
+    //   // checkListOffline.some((item2) => item1._id === item2._id)
+    // );
+
+    // filteredArray.map(async (checklist) => {
+    //   Alert.alert("dadosFiltrados", checklist._id);
+    // });
+    // if (filteredArray.length > 0) {
+    //   await checkListService.offline
+    //     .addCheckListsHttp(filteredArray)
+    //     .then(() => {
+    //       console.log("ADDED CHECKLISTS HTTP TO DB");
+    //     });
+    // } else {
+    //   console.log("NO CHECKLISTS HTTP TO ADD TO DB");
+    // }
+
+    // checkListService.offline.addCheckListsHttp(CheckListsHTTP).then(() => {
+    //   console.log("ADDED CHECKLISTS HTTP TO DB");
+    // });
 
     // TODO Filter the checklists that was update in the server but not in the offline database and save then in the offline database
     // TODO Filter the checklists that was delete in the server but not in the offline database and delete then in the offline database
@@ -175,7 +243,13 @@ export const CheckListProvider = ({ children }: Children) => {
           .then(async () => {
             // await checkListService.http.post(parsedTypeAPI).then(async () => {
             console.log("SUCCESS NEW CHECKLIST SAVE ONLINE");
-            await onConectJob();
+            await checkListService.offline.createThenCreateOnline(data[0]);
+            axios
+              .get("http://challenge-front-end.bovcontrol.com/v1/checklist")
+              .then(({ data }) => {
+                setCheckLists(data);
+              });
+            // await onConectJob();
           });
       } catch (error: any) {
         console.log("ERROR: CREATE NEW CHECKLIST ONLINE =>", error.response);
@@ -196,8 +270,12 @@ export const CheckListProvider = ({ children }: Children) => {
   }
 
   async function updateCheckList(id: string, data: IChecklistPut) {
-
     if (isConnected && isInternetReachable) {
+      console.log("data que vai pra api ser editado", data);
+
+      let tentativa = 0;
+      tentativa = tentativa + 1;
+
       try {
         await axios
           .put(
@@ -206,16 +284,31 @@ export const CheckListProvider = ({ children }: Children) => {
           )
           .then(async () => {
             // await checkListService.http.post(parsedTypeAPI).then(async () => {
-              console.log("SUCCESS NEW CHECKLIST UPDATED ONLINE");
-            await onConectJob();
+            console.log("SUCCESS NEW CHECKLIST UPDATED ONLINE");
+            try {
+              await checkListService.offline.updateThenCreateOnline(String(id), data);
+            } catch (error: any) {
+              console.log("ERROR: ao atualizar BD =>", error);
+            }
+
+            checkListService.http.getAll().then(({ data }) => {
+              setCheckLists(data);
+              // axios.get("http://challenge-front-end.bovcontrol.com/v1/checklist").then(({ data }) => {
+              //   setCheckLists(data);
+            });
+            // await onConectJob();
           });
       } catch (error: any) {
-        console.log("ERROR: UPDATE CHECKLIST ONLINE =>", error.response);
+        console.log("ERROR: UPDATE CHECKLIST ONLINE =>", error);
+        console.log("tentativa", tentativa);
       }
     } else {
       try {
         await checkListService.offline.update(id, data).then(async () => {
-          await onConectJob();
+          // await onConectJob();
+          await checkListService.offline.getAll().then((data) => {
+            setCheckLists(data);
+          });
           Alert.alert("Salvo offline");
         });
       } catch (error: any) {
@@ -235,7 +328,14 @@ export const CheckListProvider = ({ children }: Children) => {
             `http://challenge-front-end.bovcontrol.com/v1/checklist/${id}`
           )
           .then(async () => {
-            await onConectJob();
+            await checkListService.offline.deleteById(id);
+
+            axios
+              .get("http://challenge-front-end.bovcontrol.com/v1/checklist")
+              .then(({ data }) => {
+                setCheckLists(data);
+              });
+            // await onConectJob();
             console.log("SUCCESS NEW CHECKLIST DELETED ONLINE");
           });
       } catch (error: any) {

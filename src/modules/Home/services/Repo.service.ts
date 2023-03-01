@@ -27,6 +27,8 @@ const checkListService: IRepoService = {
     getUpdates: CheckListOfflineService.getUpdates,
     getDeleteds: CheckListOfflineService.getDeleteds,
     setChangeStatus: CheckListOfflineService.setChangeStatus,
+    createThenCreateOnline: CheckListOfflineService.createThenCreateOnline,
+    updateThenCreateOnline: CheckListOfflineService.updateThenCreateOnline,
   },
 };
 

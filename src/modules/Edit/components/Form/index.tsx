@@ -201,7 +201,6 @@ export const ChecklistPutForm = ({onSubmit, data} : IChecklistPutFormProps) => {
         defaultValue=""
         render={({ field: { onChange, onBlur, value } }) => (
           <CustomTextInput
-            keyboardType="numeric"
             onBlur={onBlur}
             onChangeText={onChange}
             value={value.toString()}

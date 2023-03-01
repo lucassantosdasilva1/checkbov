@@ -74,11 +74,7 @@ export function Card({ checklist }) {
   return (
     <Container>
       <SwipeAction right={right}>
-        <CardWrapper
-          onPress={() => {
-            return Alert.alert("Abre Modal de editar");
-          }}
-        >
+        <CardWrapper>
           <RowWrapper>
             <Label>Type:</Label>
             <Value>{type}</Value>

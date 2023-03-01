@@ -12,6 +12,7 @@ import Realm from "realm";
 import { CheckListSchema, DeleteApiCheckListSchema, UpdateApiCheckListSchema } from "../schemas/CheckListSchema";
 import UUID from 'react-native-uuid';
 import IChecklistHttpRepository from "../../http/repository/ChecklistHttpRepository";
+import moment from "moment";
 
 const conectionChecklistRealm = async () =>
   await Realm.open({
@@ -244,7 +245,7 @@ const CheckListOfflineService: CheckListOfflineRepository = {
   update: async (_id: string, checkList: IChecklistPut) => {
     const realm = await conectionChecklistRealm();
 
-    const data: any = realm.objectForPrimaryKey("checklist", _id);
+    const data: any = realm.objectForPrimaryKey("checklist", String(_id));
 
     // VOU DEIXAR PRONTO CASO EU QUEIRA USAR A ABORDAGEM DE SALVAR AS ALTERAÇÕES EM UMA TABELA DIFERENTE AO INVÉS DE FILTRAR PELO UPDATE_AT
     // const persistedCheckList = {
@@ -293,6 +294,68 @@ const CheckListOfflineService: CheckListOfflineRepository = {
       data.syncStatus = 'waiting';
     });
   },
+
+  createThenCreateOnline: async (checkList: IChecklistPost) => {
+    const realm = await conectionChecklistRealm();
+    const persistedCheckList = {
+      _id: checkList._id,
+      type: checkList.type,
+      amount_of_milk_produced: checkList.amount_of_milk_produced,
+      farmerName: checkList.farmer.name,
+      farmerCity: checkList.farmer.city,
+      from: checkList.from.name,
+      to: checkList.to.name,
+      number_of_cows_head: checkList.number_of_cows_head,
+      had_supervision: checkList.had_supervision,
+      latitude: checkList.location.latitude,
+      longitude: checkList.location.longitude,
+      created_at: checkList.created_at,
+      updated_at: checkList.updated_at,
+    }
+    realm.write(() => {
+      realm.create("checklist", persistedCheckList);
+    });
+  },
+
+  updateThenCreateOnline: async (_id: string, checkList: IChecklistPut, updateDate?: string) => {
+    const realm = await conectionChecklistRealm();
+
+    const data: any = realm.objectForPrimaryKey("checklist", _id);
+
+    // VOU DEIXAR PRONTO CASO EU QUEIRA USAR A ABORDAGEM DE SALVAR AS ALTERAÇÕES EM UMA TABELA DIFERENTE AO INVÉS DE FILTRAR PELO UPDATE_AT
+    // const persistedCheckList = {
+    //   _id: data._id,
+    //   type: checkList.type,
+    //   amount_of_milk_produced: checkList.amount_of_milk_produced,
+    //   farmerName: checkList.farmer.name,
+    //   farmerCity: checkList.farmer.city,
+    //   from: checkList.from.name,
+    //   to: checkList.to.name,
+    //   number_of_cows_head: checkList.number_of_cows_head,
+    //   had_supervision: checkList.had_supervision,
+    //   latitude: checkList.location.latitude,
+    //   longitude: checkList.location.longitude,
+    //   created_at: data.created_at,
+    //   updated_at: new Date(),
+    //   __v: data.__v,
+    // };
+
+    realm.write(() => {
+      //faz parte da abordagem de salvar as alterações em uma tabela diferente ao invés de filtrar pelo update_at
+      // realm.create("checklist", persistedCheckList);
+      data.type = checkList.type;
+      data.amount_of_milk_produced = checkList.amount_of_milk_produced;
+      data.farmerName = checkList.farmer.name;
+      data.farmerCity = checkList.farmer.city;
+      data.from = checkList.from.name;
+      data.to = checkList.to.name;
+      data.number_of_cows_head = checkList.number_of_cows_head;
+      data.had_supervision = checkList.had_supervision;
+      data.latitude = checkList.location.latitude;
+      data.longitude = checkList.location.longitude;
+      data.updated_at = updateDate;
+  });
+  }
 };
 
 export default CheckListOfflineService;

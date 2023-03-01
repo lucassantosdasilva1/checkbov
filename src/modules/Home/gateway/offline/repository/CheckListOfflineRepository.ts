@@ -13,4 +13,7 @@ export default interface CheckListOfflineRepository {
   getUpdates: () => Promise<IChecklistPutOffline[]>;
   getDeleteds: () => Promise<IChecklistGetOffline[]>;
   setChangeStatus: (id: string, syncStatus: 'synced' | 'waiting' | 'error') => Promise<void>;
+
+  createThenCreateOnline: (checkList: IChecklistPost) => Promise<void>;
+  updateThenCreateOnline: (id: string, checkList: IChecklistPut, updateDate?: string) => Promise<void>;
 }
