@@ -157,6 +157,8 @@ const CheckListOfflineService: CheckListOfflineRepository = {
         _id: checkList._id,
         type: checkList.type,
         amount_of_milk_produced: checkList.amount_of_milk_produced,
+        number_of_cows_head: checkList.number_of_cows_head,
+        had_supervision: checkList.had_supervision,
         farmer: {
           name: checkList.farmerName,
           city: checkList.farmerCity,
@@ -167,8 +169,6 @@ const CheckListOfflineService: CheckListOfflineRepository = {
         to: {
           name: checkList.to,
         },
-        number_of_cows_head: checkList.number_of_cows_head,
-        had_supervision: checkList.had_supervision,
         location: {
           latitude: checkList.latitude,
           longitude: checkList.longitude,

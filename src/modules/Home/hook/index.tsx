@@ -3,12 +3,11 @@ import { useState } from "react";
 import { Children } from "@core/hooks/globalTypes";
 import { IChecklistGet, CheckListContext, IChecklistPost } from "./types";
 import { checkListService } from "../services/Repo.service";
-import { useNetInfo, addEventListener } from "@react-native-community/netinfo";
+import { useNetInfo } from "@react-native-community/netinfo";
 import React, { createContext, useEffect, useContext } from "react";
-import { ToastAndroid } from "react-native";
 import { Alert } from "react-native";
 import axios from "axios";
-import { useNavigation } from "@react-navigation/native";
+import { Toast } from "@ant-design/react-native";
 
 const Context = createContext<CheckListContext>({} as CheckListContext);
 
@@ -16,7 +15,12 @@ export const CheckListProvider = ({ children }: Children) => {
   const [showModal, setShowModal] = useState(false);
   const [checkLists, setCheckLists] = useState<IChecklistGet[]>([]);
 
-  const navigation = useNavigation();
+  const parseChecklistAddingCHECKLISTonObject = (data: IChecklistPost[]) => {
+      const parsedTypeAPI = {
+        checklists: [...data],
+      };
+    return parsedTypeAPI
+  }
 
   const { isConnected, isInternetReachable, details } = useNetInfo();
 
@@ -115,7 +119,7 @@ export const CheckListProvider = ({ children }: Children) => {
   // and then it will download all the data from the server and save it in the offline database, if the 3 upload functions are successful
   async function onConectJob() {
     if (isConnected && isInternetReachable) {
-      Alert.alert("Conectado", "Sincronizando");
+      Alert.alert("Sincronizando");
       const resultUp1 = await upOfflineDeletedCheckLists();
       const resultUp2 = await upOfflineUpdatedCheckLists();
       const resultUp3 = await upOfflineCreatedCheckLists();
@@ -135,7 +139,7 @@ export const CheckListProvider = ({ children }: Children) => {
         Alert.alert("Error", "Nao foi possível sincronizar");
       }
     } else {
-      Alert.alert("Error", "Sem conexao com a internet");
+      Toast.fail("Sem conexão", 5);
       checkListService.offline.getAll().then((data) => {
         setCheckLists(data);
       });
@@ -143,38 +147,10 @@ export const CheckListProvider = ({ children }: Children) => {
   }
 
   async function saveNewCheckList(data: IChecklistPost[]) {
-    console.log("entrou aqui")
-    let checklists = [{}];
-    checklists = [data]
-    let parsedTypeAPI = [checkLists];
-
-    let tentarne = {
-      "checklists": [
-        {
-          "_id": "123213122223123",
-          "type": "BPA",
-          "amount_of_milk_produced": 300,
-          "number_of_cows_head": 17,
-          "had_supervision": true,
-          "farmer": {
-            "name": "Fazenda São Rock",
-            "city": "São Rock"
-          },
-          "from": {
-            "name": "Fílip"
-          },
-          "to": {
-            "name": "Fernando Siqueira"
-          },
-          "location": {
-            "latitude": -23.5,
-            "longitude": -46.6
-          },
-          "created_at": "2023-02-28T17:24:59-03:00",
-          "updated_at": "2023-02-28T17:24:59-03:00"
-        }
-      ]
-    }
+    const parsedTypeAPI = parseChecklistAddingCHECKLISTonObject(data)
+    // const parsedTypeAPI = {
+    //   checklists: [...data],
+    // };
     // parsedTypeAPI = [checklists: [{
     //       _id: data._id,
     //       type: data.type,
@@ -203,33 +179,34 @@ export const CheckListProvider = ({ children }: Children) => {
     if (isConnected && isInternetReachable) {
       try {
         await axios.post("http://challenge-front-end.bovcontrol.com/v1/checklist",
-        {
-          "checklists": [
-            {
-              "_id": "144554554545244544545",
-              "type": "BPA",
-              "amount_of_milk_produced": 300,
-              "number_of_cows_head": 17,
-              "had_supervision": true,
-              "farmer": {
-                "name": "Fazenda São Rock",
-                "city": "São Rock"
-              },
-              "from": {
-                "name": "FULANO"
-              },
-              "to": {
-                "name": "Fernando Siqueira"
-              },
-              "location": {
-                "latitude": -23.5,
-                "longitude": -46.6
-              },
-              "created_at": "2022-02-01T10:10:21.748Z",
-              "updated_at": "2022-02-01T10:10:21.748Z"
-            }
-          ]
-        }
+        parsedTypeAPI
+        // {
+        //   "checklists": [
+        //     {
+        //       "_id": "144554554545244544545",
+        //       "type": "BPA",
+        //       "amount_of_milk_produced": 300,
+        //       "number_of_cows_head": 17,
+        //       "had_supervision": true,
+        //       "farmer": {
+        //         "name": "Fazenda São Rock",
+        //         "city": "São Rock"
+        //       },
+        //       "from": {
+        //         "name": "FULANO"
+        //       },
+        //       "to": {
+        //         "name": "Fernando Siqueira"
+        //       },
+        //       "location": {
+        //         "latitude": -23.5,
+        //         "longitude": -46.6
+        //       },
+        //       "created_at": "2022-02-01T10:10:21.748Z",
+        //       "updated_at": "2022-02-01T10:10:21.748Z"
+        //     }
+        //   ]
+        // }
         ).then(async () => {  
         // await checkListService.http.post(tentarne).then(async () => {
           console.log("Deu foi certo pai")
@@ -249,7 +226,7 @@ export const CheckListProvider = ({ children }: Children) => {
           await onConectJob();
         });
       } catch (error: any) {
-        console.log("ERROR: CREATE NEW CHECKLIST OFFLINE =>", error);
+        console.log("ERROR: CREATE NEW CHECKLIST OFFLINE =>", error.response.message);
       }
     }
   }

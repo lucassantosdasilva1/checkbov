@@ -3,7 +3,9 @@ import { View } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
 import styled from 'styled-components/native';
 
-
+export const Container = styled(View)`
+  margin: 8px 0 8px 0;
+  `;
 
 export const CardWrapper = styled.TouchableOpacity.attrs({
   activeOpacity: 1,
@@ -13,8 +15,8 @@ export const CardWrapper = styled.TouchableOpacity.attrs({
   background-color: ${ ({ theme }) => theme.colors.secondary_background };
   border-radius: 4px;
   padding: 16px;
-  margin: 16px;
-  width: 300px;
+
+  width: 100%;
 `;
 
 export const RowWrapper = styled.View`
