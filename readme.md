@@ -3,6 +3,11 @@
 	React Native Challenge BovControl  🐄
 </h1>
 
+![alt text](src/shared/assets/screenshots/SCHT1.jpg)
+![alt text](src/shared/assets/screenshots/SCHT2.jpg)
+![alt text](src/shared/assets/screenshots/SCHT3.jpg)
+![alt text](src/shared/assets/screenshots/SCHT4.jpg)
+
 <h4 align="center"> 
 	📱 Mobile  Concluído 🚀 
 </h4>
