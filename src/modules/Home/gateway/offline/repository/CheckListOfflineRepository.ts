@@ -7,6 +7,7 @@ export default interface CheckListOfflineRepository {
   getById: (id: string) => Promise<IChecklistGet>;
   update: (id: string, checkList: IChecklistPut) => Promise<void>;
   deleteById: (id: string) => Promise<void>;
+  deleteAll: () => Promise<void>;
   
   addCheckListsHttp: (checkList: IChecklistGet[]) => Promise<void>;
   getCreates: () => Promise<IChecklistPost[]>;
