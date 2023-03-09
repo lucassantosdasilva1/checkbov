@@ -6,11 +6,12 @@ import { Container, Label, ErrorMessage } from "./styles";
 import { Button } from "react-native";
 import { CustomTextInput } from "../CustomTextInput";
 import { IReturnRegisterFormData } from "@modules/Register/hooks/types";
+import RadioForm from "react-native-simple-radio-button";
 interface IChecklistPostFormProps {
   onSubmit: (data: IReturnRegisterFormData) => void;
 }
 
-export const ChecklistPostForm = ({onSubmit} : IChecklistPostFormProps) => {
+export const ChecklistPostForm = ({ onSubmit }: IChecklistPostFormProps) => {
   const {
     control,
     handleSubmit,
@@ -20,6 +21,16 @@ export const ChecklistPostForm = ({onSubmit} : IChecklistPostFormProps) => {
   });
 
   // const onSubmit = (data: any) => console.log(data);
+  const options = [
+    {
+      label: "Yes",
+      value: "true",
+    },
+    {
+      label: "No",
+      value: "false",
+    },
+  ];
 
   return (
     <Container>
@@ -179,11 +190,23 @@ export const ChecklistPostForm = ({onSubmit} : IChecklistPostFormProps) => {
         }}
         defaultValue=""
         render={({ field: { onChange, onBlur, value } }) => (
-          <CustomTextInput
+          <RadioForm
+            radio_props={options}
+            initial={0}
+            animation={false}
+            formHorizontal={true}
+            labelHorizontal={true}
+            buttonColor={"#FFF"}
+            selectedButtonColor={"#FFF"}
+            labelColor={"#FFF"}
+            selectedLabelColor={"#FFF"}
+            buttonSize={10}
+            buttonOuterSize={20}
+            labelStyle={{ fontSize: 12, marginRight: 10 }}
             onBlur={onBlur}
-            onChangeText={onChange}
-            value={value.toString()}
-            placeholder="Ex.: true or false"
+            value={value}
+            // ref={value}
+            onPress={onChange}
           />
         )}
         name="has_supervision"
