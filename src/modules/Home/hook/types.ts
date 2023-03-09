@@ -1,6 +1,6 @@
 export interface IChecklistGet {
   _id: string;
-  type: "BPA" | "BPF" | "Antibiotic";
+  type: string;
   amount_of_milk_produced: number;
   farmer: {
     name: string;
@@ -77,7 +77,7 @@ export interface IChecklistPostOffline {
   syncStatus?: 'synced' | 'waiting' | 'error',
 
   _id: string;
-  type: "BPA" | "BPF" | "Antibiotic";
+  type: string;
   amount_of_milk_produced: number;
   farmer: {
     name: string;
@@ -101,7 +101,7 @@ export interface IChecklistPutOffline {
   _id: string,
   ActType?: 'update' | 'create' | 'delete',
   syncStatus?: 'synced' | 'waiting' | 'error',
-  type: "BPA" | "BPF" | "Antibiotic";
+  type: string;
   amount_of_milk_produced: number;
   number_of_cows_head: number;
   had_supervision: boolean;
@@ -131,7 +131,7 @@ export type IChecklistGetOffline = {
   syncStatus: string;
   isDeleted: boolean;
   _id: string;
-  type: "BPA" | "BPF" | "Antibiotic";
+  type: string;
   amount_of_milk_produced: number;
   farmerName: string;
   farmerCity: string;
@@ -148,7 +148,7 @@ export type IChecklistGetOffline = {
 
 export type IChecklistSetDataOffline = {
   _id: string;
-  type: "BPA" | "BPF" | "Antibiotic";
+  type: string;
   amount_of_milk_produced: number;
   farmerName: string;
   farmerCity: string;

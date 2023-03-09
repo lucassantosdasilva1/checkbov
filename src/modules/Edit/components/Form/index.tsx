@@ -7,7 +7,8 @@ import { Alert, Button } from "react-native";
 import { CustomTextInput } from "../CustomTextInput";
 import { IEditProps, IReturnRegisterFormData } from "@modules/Edit/hooks/types";
 import { IChecklistPut } from "@modules/Home/hook/types";
-
+import RadioForm from "react-native-simple-radio-button";
+import { Loading } from "@shared/components/Loading";
 interface IChecklistPutFormProps {
   onSubmit: (data: IReturnRegisterFormData) => void;
   data: IChecklistPut 
@@ -22,14 +23,61 @@ export const ChecklistPutForm = ({onSubmit, data} : IChecklistPutFormProps) => {
   } = useForm<IReturnRegisterFormData>({
     // resolver: checklistYupResolver,
   });
+  const [loaded, setLoaded] = useState(false);
 
   const valuesToEdit = data;
+
+  const options = [
+    {
+      label: "Yes",
+      value: "true",
+    },
+    {
+      label: "No",
+      value: "false",
+    },
+  ];
+  const optionsChecklist = [
+    {
+      label: "BPA",
+      value: "BPA",
+    },
+    {
+      label: "BPF",
+      value: "BPF",
+    },
+    {
+      label: "Antibiotic",
+      value: "Antibiotic",
+    },
+  ];
+
+  
+  const setButtonHadSupervision = (value: string | boolean) => {
+    if (value == "true" || value == true || value == "True" || value == "TRUE " || value == 'true') {
+      return 0;
+    } else {
+      return 1;
+    }
+  };
+
+  const setButtonType = (value: string) => {
+    if (value.toLowerCase() == "bpa") {
+      return 0;
+    } else if(value.toLocaleLowerCase() == "bpf") {
+      return 1;
+    } else if(value.toLocaleLowerCase() == "antibiotic" || value.toLocaleLowerCase() == "antibiotico" || value.toLocaleLowerCase() == "antibiótico") {
+      return 2;
+    } else {
+      return 0;
+    }
+  };
   // Alert.alert(JSON.stringify(valuesToEdit))
 
   useEffect(() => {
     setValue("type", valuesToEdit.type);
     setValue("number_of_cows_head", String(valuesToEdit.number_of_cows_head));
-    setValue("had_supervision", String(valuesToEdit.had_supervision));
+    setValue("had_supervision", `${valuesToEdit.had_supervision}`);
     setValue("from", valuesToEdit.from.name);
     setValue("to", valuesToEdit.to.name);
     setValue("latitude", String(valuesToEdit.location.latitude));
@@ -37,13 +85,17 @@ export const ChecklistPutForm = ({onSubmit, data} : IChecklistPutFormProps) => {
     setValue("amount_of_milk_produced", String(valuesToEdit.amount_of_milk_produced));
     setValue("farmerName", valuesToEdit.farmer.name);
     setValue("farmerCity", valuesToEdit.farmer.city);
+
+    setLoaded(true);
   }, []);
 
 
   // const onSubmit = (data: any) => console.log(data);
 
   return (
-    <Container>
+    <>
+    {loaded ? 
+      <Container>
       <Label>Type CheckList</Label>
       <Controller
         control={control}
@@ -52,13 +104,25 @@ export const ChecklistPutForm = ({onSubmit, data} : IChecklistPutFormProps) => {
         }}
         defaultValue=""
         render={({ field: { onChange, onBlur, value } }) => (
-          <CustomTextInput
+          <RadioForm
+            radio_props={optionsChecklist}
+            initial={setButtonType(value)}
+            animation={false}
+            formHorizontal={true}
+            labelHorizontal={true}
+            buttonColor={"#FFF"}
+            selectedButtonColor={"#FFF"}
+            labelColor={"#FFF"}
+            selectedLabelColor={"#FFF"}
+            buttonSize={10}
+            buttonOuterSize={20}
+            labelStyle={{ fontSize: 12, marginRight: 10 }}
             onBlur={onBlur}
-            onChangeText={onChange}
-            value={value.toString()}
-            placeholder="Ex.: BPA or BPF or Antibiotic"
+            value={value}
+            // ref={value}
+            onPress={onChange}
           />
-        )}
+          )}
         name="type"
       />
 
@@ -198,13 +262,22 @@ export const ChecklistPutForm = ({onSubmit, data} : IChecklistPutFormProps) => {
         rules={{
           required: true,
         }}
-        defaultValue=""
         render={({ field: { onChange, onBlur, value } }) => (
-          <CustomTextInput
+          <RadioForm
+            radio_props={options}
+            initial={setButtonHadSupervision(value)}
+            animation={false}
+            formHorizontal={true}
+            labelHorizontal={true}
+            buttonColor={"#FFF"}
+            selectedButtonColor={"#FFF"}
+            labelColor={"#FFF"}
+            selectedLabelColor={"#FFF"}
+            buttonSize={10}
+            buttonOuterSize={20}
+            labelStyle={{ fontSize: 12, marginRight: 10 }}
             onBlur={onBlur}
-            onChangeText={onChange}
-            value={value.toString()}
-            placeholder="Ex.: true or false"
+            onPress={onChange}
           />
         )}
         name="had_supervision"
@@ -253,5 +326,7 @@ export const ChecklistPutForm = ({onSubmit, data} : IChecklistPutFormProps) => {
 
       <Button title="Submit" onPress={handleSubmit(onSubmit)} />
     </Container>
-  );
+     : <Loading />}
+     </>
+     );
 };
