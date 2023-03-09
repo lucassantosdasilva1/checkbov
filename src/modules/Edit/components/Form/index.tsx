@@ -37,6 +37,20 @@ export const ChecklistPutForm = ({onSubmit, data} : IChecklistPutFormProps) => {
       value: "false",
     },
   ];
+  const optionsChecklist = [
+    {
+      label: "BPA",
+      value: "BPA",
+    },
+    {
+      label: "BPF",
+      value: "BPF",
+    },
+    {
+      label: "Antibiotic",
+      value: "Antibiotic",
+    },
+  ];
 
   
   const setButtonHadSupervision = (value: string | boolean) => {
@@ -44,6 +58,18 @@ export const ChecklistPutForm = ({onSubmit, data} : IChecklistPutFormProps) => {
       return 0;
     } else {
       return 1;
+    }
+  };
+
+  const setButtonType = (value: string) => {
+    if (value.toLowerCase() == "bpa") {
+      return 0;
+    } else if(value.toLocaleLowerCase() == "bpf") {
+      return 1;
+    } else if(value.toLocaleLowerCase() == "antibiotic" || value.toLocaleLowerCase() == "antibiotico" || value.toLocaleLowerCase() == "antibiótico") {
+      return 2;
+    } else {
+      return 0;
     }
   };
   // Alert.alert(JSON.stringify(valuesToEdit))
@@ -78,13 +104,25 @@ export const ChecklistPutForm = ({onSubmit, data} : IChecklistPutFormProps) => {
         }}
         defaultValue=""
         render={({ field: { onChange, onBlur, value } }) => (
-          <CustomTextInput
+          <RadioForm
+            radio_props={optionsChecklist}
+            initial={setButtonType(value)}
+            animation={false}
+            formHorizontal={true}
+            labelHorizontal={true}
+            buttonColor={"#FFF"}
+            selectedButtonColor={"#FFF"}
+            labelColor={"#FFF"}
+            selectedLabelColor={"#FFF"}
+            buttonSize={10}
+            buttonOuterSize={20}
+            labelStyle={{ fontSize: 12, marginRight: 10 }}
             onBlur={onBlur}
-            onChangeText={onChange}
-            value={value.toString()}
-            placeholder="Ex.: BPA or BPF or Antibiotic"
+            value={value}
+            // ref={value}
+            onPress={onChange}
           />
-        )}
+          )}
         name="type"
       />
 

@@ -15,12 +15,12 @@ export const ChecklistPostForm = ({ onSubmit }: IChecklistPostFormProps) => {
   const {
     control,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<IReturnRegisterFormData>({
     // resolver: checklistYupResolver,
   });
 
-  // const onSubmit = (data: any) => console.log(data);
   const options = [
     {
       label: "Yes",
@@ -32,6 +32,27 @@ export const ChecklistPostForm = ({ onSubmit }: IChecklistPostFormProps) => {
     },
   ];
 
+  const optionsChecklist = [
+    {
+      label: "BPA",
+      value: "BPA",
+    },
+    {
+      label: "BPF",
+      value: "BPF",
+    },
+    {
+      label: "Antibiotic",
+      value: "Antibiotic",
+    },
+  ];
+
+  useEffect(() => {
+    setValue("has_supervision", `${true}`);
+    setValue("type", `BPA`);
+  }, []);
+
+  // const onSubmit = (data: any) => console.log(data);
   return (
     <Container>
       <Label>Type CheckList</Label>
@@ -40,13 +61,25 @@ export const ChecklistPostForm = ({ onSubmit }: IChecklistPostFormProps) => {
         rules={{
           required: true,
         }}
-        defaultValue=""
+        defaultValue="BPA"
         render={({ field: { onChange, onBlur, value } }) => (
-          <CustomTextInput
+          <RadioForm
+            radio_props={optionsChecklist}
+            initial={0}
+            animation={false}
+            formHorizontal={true}
+            labelHorizontal={true}
+            buttonColor={"#FFF"}
+            selectedButtonColor={"#FFF"}
+            labelColor={"#FFF"}
+            selectedLabelColor={"#FFF"}
+            buttonSize={10}
+            buttonOuterSize={20}
+            labelStyle={{ fontSize: 12, marginRight: 10 }}
             onBlur={onBlur}
-            onChangeText={onChange}
-            value={value.toString()}
-            placeholder="Ex.: BPA or BPF or Antibiotic"
+            value={value}
+            // ref={value}
+            onPress={onChange}
           />
         )}
         name="type"
@@ -188,7 +221,7 @@ export const ChecklistPostForm = ({ onSubmit }: IChecklistPostFormProps) => {
         rules={{
           required: true,
         }}
-        defaultValue=""
+        defaultValue="true"
         render={({ field: { onChange, onBlur, value } }) => (
           <RadioForm
             radio_props={options}
