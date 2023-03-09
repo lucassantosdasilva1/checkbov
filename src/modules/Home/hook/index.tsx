@@ -151,70 +151,16 @@ export const CheckListProvider = ({ children }: Children) => {
   const downloadCheckListsHTTPtoDB = async (
     CheckListsHTTP: IChecklistGet[]
   ) => {
-    const checkListOffline = await checkListService.offline.getAll();
-
-    // atualiza os dados locais com os que foram alterados no servidor
-    let arrayCheckListsHTTPThatWillBeUpdated = [];
-
-    for (let i = 0; i < CheckListsHTTP.length; i++) {
-      for (let j = 0; j < checkListOffline.length; j++) {
-        //comparação para preencher o array com os checklists que serão atualizados a partir do HTTP
-        if (CheckListsHTTP[i]._id == checkListOffline[j]._id) {
-          if (
-            CheckListsHTTP[i].updated_at.getTime() >
-            checkListOffline[j].updated_at.getTime()
-          ) {
-            console.log(
-              "entrou aqui para atualizar o BD a partir do HTTP I",
-              CheckListsHTTP[i]
-            );
-            console.log(
-              "entrou aqui para atualizar o BD a partir do HTTP J",
-              CheckListsHTTP[i]
-            );
-            arrayCheckListsHTTPThatWillBeUpdated.push(CheckListsHTTP[i]);
-          }
-        }
-      }
-    }
-
-    arrayCheckListsHTTPThatWillBeUpdated.map(async (checklist) => {
+    await checkListService.offline.deleteAll().then(() => {
       try {
-        await checkListService.offline.updateThenUpdateOnline(
-          checklist._id,
-          checklist,
-          String(checklist.updated_at)
-        );
+        CheckListsHTTP.map(async (checklist) => {
+          await checkListService.offline.addCheckListsHttp(CheckListsHTTP);
+        });
+
       } catch (error: any) {
-        console.log(
-          "ERROR: ON SET UPDATE-CHECKLIST FROM HTTP TO OFFLINE =>",
-          error
-        );
+        console.log("ERROR: ON DOWNLOAD CHECKLISTS HTTP TO DB =>", error);
       }
     });
-
-    //cria dados locais com os que foram criados no servidor
-    let arrayCheckListsHTTPThatWillBeCreated = [];
-    if (checkListOffline.length == 0) {
-      CheckListsHTTP.map(async (checklist) => {
-        try {
-          await checkListService.offline.addCheckListsHttp([checklist]);
-        } catch (error: any) {
-          console.log(
-            "ERROR: ON SET CREATE-CHECKLIST FROM HTTP TO OFFLINE =>",
-            error
-          );
-        }
-      });
-    } else {
-      //aqui ele salva os itens que nao tem no BD local
-      const arrayCheckListsHTTPThatWillBeCreated = CheckListsHTTP.filter(
-        async (item) => {
-          !checkListOffline.includes(item);
-        }
-      );
-    }
-
     return true;
   };
 

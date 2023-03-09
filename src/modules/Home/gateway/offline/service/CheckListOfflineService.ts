@@ -295,6 +295,15 @@ const CheckListOfflineService: CheckListOfflineRepository = {
     });
   },
 
+  deleteAll: async () => {
+    const realm = await conectionChecklistRealm();
+    const data = realm.objects<IChecklistGetOffline>("checklist");
+
+    realm.write(() => {
+      realm.delete(data);
+    });
+  },
+
   createThenCreateOnline: async (checkList: IChecklistPost) => {
     const realm = await conectionChecklistRealm();
     const persistedCheckList = {
