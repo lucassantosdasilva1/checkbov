@@ -22,6 +22,7 @@ const checkListService: IRepoService = {
     create: CheckListOfflineService.create,
     update: CheckListOfflineService.update,
     deleteById: CheckListOfflineService.deleteById,
+    deleteAll: CheckListOfflineService.deleteAll,
     addCheckListsHttp: CheckListOfflineService.addCheckListsHttp, 
     getCreates: CheckListOfflineService.getCreates,
     getUpdates: CheckListOfflineService.getUpdates,
